@@ -3,8 +3,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static java.util.Random.*;
-
 /**
  *  This class contains and controls a gameGrid of GameTiles as part of a JLayeredPanel.
  *
@@ -14,13 +12,18 @@ import static java.util.Random.*;
  *  - player - shows the player
  */
 public class GameMap extends JLayeredPane {
-    public static int TILE_SIZE = 32; // size of a singe game tile (square) in pixels
-    public static int NUMBER_OF_ROWS = 13;
-    public static int NUMBER_OF_COLUMNS = 9;
+    public static final int TILE_SIZE = 32; // size of a singe game tile (square) in pixels
+    public static final int NUMBER_OF_ROWS = 13;
+    public static final int NUMBER_OF_COLUMNS = 9;
 
     // Types of content the gameGrid can contain
     public enum Content{
         LAND, WATER, STUMP, PLANK
+    }
+
+    class Plank{
+        public int size = 0;
+        public int orientation = 0; // 0 for picked up, positive for horizontal and negative for vertical
     }
 
     private JPanel mapPanel, plankPanel;
@@ -54,7 +57,7 @@ public class GameMap extends JLayeredPane {
         player.setSize(TILE_SIZE,TILE_SIZE);
         add(player, new Integer(20));
 
-        // Create the gameGrid and add it to the map panel
+        // Add each tile of the gameGrid to the mapPanel
         for(int i = 0; i < NUMBER_OF_ROWS; i++)
             for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
                 gameGrid[i][j] = new GameTile(i, j);
@@ -131,6 +134,11 @@ public class GameMap extends JLayeredPane {
         }
     }
 
+    /**
+     * Moves the player to a place in the gameGrid
+     * @param row grid row destination
+     * @param col grid column destination
+     */
     public void movePlayerTo(int row, int col){
         player.setLocation(col * TILE_SIZE,row * TILE_SIZE);
     }
@@ -142,6 +150,7 @@ public class GameMap extends JLayeredPane {
         private Content content; // type of content the tile holds
         private int row;
         private int col;
+        private int plankIndex; // index of the plank placed on this field, -1 if no plank
 
         /**
          * Constructor. Creates the GameTile with set coordinates and content.
@@ -149,7 +158,7 @@ public class GameMap extends JLayeredPane {
          * @param row row position of the tile
          * @param col column position of the tile
          */
-        public GameTile(Content content, int row, int col) {
+        private GameTile(Content content, int row, int col) {
             this.content = content;
             this.row = row;
             this.col = col;
@@ -161,7 +170,7 @@ public class GameMap extends JLayeredPane {
          * @param row row position of the tile
          * @param col column position of the tile
          */
-        public GameTile(int row, int col){
+        private GameTile(int row, int col){
             this.row = row;
             this.col = col;
         }
@@ -170,7 +179,7 @@ public class GameMap extends JLayeredPane {
          * Sets the content of the tile.
          * @param content new tile content type
          */
-        public void setContent(Content content) {
+        private void setContent(Content content) {
             switch (content) {
                 case LAND:
                     if (row < 1)
@@ -200,6 +209,22 @@ public class GameMap extends JLayeredPane {
         }
 
         /**
+         * Get the index of the plank contained. Return -1 if no plank contained.
+         * @return plankIndex index of the plank in the plankList
+         */
+        public int getPlankIndex() {
+            return plankIndex;
+        }
+
+        /**
+         * Set the index of the plank held by this tile. Set to -1 if no plank to be contained.
+         * @param plankIndex index of the plank in the plankList
+         */
+        public void setPlankIndex(int plankIndex) {
+            this.plankIndex = plankIndex;
+        }
+
+        /**
          * Get the row position of the tile
          * @return row position of the tile
          */
@@ -215,6 +240,10 @@ public class GameMap extends JLayeredPane {
             return col;
         }
 
+        /**
+         * Get the current type of content of the tile
+         * @return content of the tile
+         */
         public Content getContent() {
             return content;
         }
@@ -238,12 +267,5 @@ public class GameMap extends JLayeredPane {
     public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.gif")); // horizontal plank
     public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.gif")); // vertical plank
 
-    // fields with player on them
-    public final ImageIcon p_stumpIcon = new ImageIcon(getClass().getResource("stump1_man.jpg"));
-    public final ImageIcon p_stumpDBIcon = new ImageIcon(getClass().getResource("stump2_man.jpg")); // downside bank stump
-    public final ImageIcon p_stumpUPIcon = new ImageIcon(getClass().getResource("stump3_man.jpg")); // upper bank stump
-
-    public final ImageIcon p_hPlankIcon = new ImageIcon(getClass().getResource("plank1_man.jpg")); // horizontal plank
-    public final ImageIcon p_vPlankIcon = new ImageIcon(getClass().getResource("plank2_man.jpg")); // vertical plank
     public final ImageIcon playerIcon = new ImageIcon(getClass().getResource("man.gif"));
 }

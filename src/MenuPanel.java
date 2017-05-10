@@ -4,23 +4,27 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by zabraih on 04.05.2017.
+ * Creates the Menu Panel of the game.
  */
 public class MenuPanel extends javax.swing.JPanel {
     private JPanel parent;
 
-    public MenuPanel(JPanel parent){
+    /**
+     * Constructor.
+     *
+     * @param parent parent panel of the MenuPanel
+     */
+    public MenuPanel(JPanel parent) {
         this.parent = parent;
 
         loadMenu();
     }
 
+    /**
+     * Load the menu GUI.
+     */
     private void loadMenu() {
         //remove any content from parent panel and replace it with this one
-        parent.removeAll();
-        parent.add(this);
-        parent.revalidate();
-        parent.repaint();
 
         JButton playButton;
         add(playButton = new JButton("Play"));
@@ -32,24 +36,31 @@ public class MenuPanel extends javax.swing.JPanel {
                 revalidate();
                 repaint();
             }
-
-            private void getLevels() {
-                ActionListener levelListener = new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        new PlayGame(parent,Integer.parseInt(e.getActionCommand()));
-                    }
-                };
-
-                JButton[] levelButton = new JButton[40];
-                JPanel buttonPanel = new JPanel(new GridLayout(8,5));
-                for(int i = 0; i < 40 ; i++){
-                    levelButton[i] = new JButton(Integer.toString(i+1));
-                    buttonPanel.add(levelButton[i]);
-                    levelButton[i].addActionListener(levelListener);
-                }
-                add(buttonPanel);
-            }
         });
     }
+
+    /**
+     * Load the available levels lift
+     */
+    private void getLevels() {
+        ActionListener levelListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parent.removeAll();
+                parent.add(new PlayGame(parent, Integer.parseInt(e.getActionCommand())));
+                parent.revalidate();
+                parent.repaint();
+            }
+        };
+
+        JButton[] levelButton = new JButton[40];
+        JPanel buttonPanel = new JPanel(new GridLayout(8, 5));
+        for (int i = 0; i < 40; i++) {
+            levelButton[i] = new JButton(Integer.toString(i + 1));
+            buttonPanel.add(levelButton[i]);
+            levelButton[i].addActionListener(levelListener);
+        }
+        add(buttonPanel);
+    }
 }
+

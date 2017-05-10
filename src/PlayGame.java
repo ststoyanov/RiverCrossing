@@ -3,43 +3,59 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by zabraih on 04.05.2017.
+ * Controls the user input and game output.
  */
 public class PlayGame extends javax.swing.JPanel {
     private JPanel parent;
     private JButton menuButton;
     private GameMap gameMap = new GameMap();
 
+    /**
+     * Constructor. Load the game from a specified lvl.
+     *
+     * @param parent parent panel of the PlayGame panel
+     * @param level  starting level
+     */
     public PlayGame(JPanel parent, int level) {
         this.parent = parent;
         createGamePanel();
         loadGame(level);
     }
 
-    public PlayGame(JPanel parent){
-        this(parent,1);
+    /**
+     * Constructor. Start the game from lvl 1.
+     *
+     * @param parent
+     */
+    public PlayGame(JPanel parent) {
+        this(parent, 1);
     }
 
-    private void createGamePanel(){
-        //remove any content from parent panel and replace it with this one
-        parent.removeAll();
-        parent.add(this);
-        parent.revalidate();
-        parent.repaint();
-
+    /**
+     * Create the PlayGame JPanel.
+     */
+    private void createGamePanel() {
         add(gameMap);
+
         menuButton = new JButton("Menu");
         add(menuButton);
         menuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                parent.remove(PlayGame.this);
+                parent.removeAll();
                 parent.add(new MenuPanel(parent));
+                parent.revalidate();
+                parent.repaint();
             }
         });
     }
 
-    private void loadGame(int level){
+    /**
+     * Load the game at a lvl.
+     *
+     * @param level lvl to be loaded
+     */
+    private void loadGame(int level) {
         gameMap.loadLevel(level);
     }
 }

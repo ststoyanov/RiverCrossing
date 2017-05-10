@@ -1,7 +1,7 @@
 import javax.swing.*;
 
 /**
- * Created by zabraih on 04.05.2017.
+ * Created the main window of the River Crossing game
  */
 public class MainWindow {
     private JFrame window;
@@ -10,14 +10,14 @@ public class MainWindow {
     /**
      * Constructor; creates the game window.
      */
-    public MainWindow(){
+    public MainWindow() {
         window = new JFrame("River Crossing: The Perilous Plank Puzzle");
 
         mainPanel = new JPanel();
-        new MenuPanel(mainPanel);
+        mainPanel.add(new MenuPanel(mainPanel));
 
         //finalize and show window
-        window.setSize(800,600);
+        window.setSize(800, 600);
         window.setContentPane(mainPanel);
         window.setResizable(false);
         window.setVisible(true);
