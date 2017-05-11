@@ -21,12 +21,15 @@ public class GameMap extends JLayeredPane {
         LAND, WATER, STUMP, PLANK
     }
 
-    private class Plank extends JLabel{
+    private class Plank extends JButton{
         private int size;
         private int orientation; // 0 for picked up, positive for horizontal and negative for vertical
         private GameTile[] span = new GameTile[3]; // GameTiles the plank spans over
 
         private Plank(int size, int orientation) {
+            setBorder(BorderFactory.createEmptyBorder());
+            setContentAreaFilled(false);
+
             this.size = size;
             this.orientation = orientation;
             if (orientation < 0) {
@@ -131,74 +134,77 @@ public class GameMap extends JLayeredPane {
         Plank plank = new Plank(); // temp plank object
         int size = 0; // temp size
 
+        int rowA = stumpA.getRow(), rowB = stumpB.getRow();
+        int colA = stumpA.getCol(), colB = stumpB.getCol();
+
         plankPanel.add(plank); // add the plank to tha view
         plankList.add(plank); // add the plank to the plankList
 
         // check if stumpA and stumpB are in the same row
-        if(stumpA.getRow() == stumpB.getRow()){
+        if(rowA == rowB){
             // if so set orientation to 1 (horizontal)
             plank.setOrientation(1);
 
             // check if B comes before A
-            if(stumpA.getCol() > stumpB.getCol()){
+            if(colA > colB){
                 // set the content of all tiles between A and B to PLANK
                 // add the tiles to the span of the plank
                 // also add the index of the plank to the tile
-                for(int j = stumpB.getCol()+1;j < stumpA.getCol() ;j++){
-                    gameGrid[stumpA.getRow()][j].setContent(Content.PLANK);
-                    gameGrid[stumpA.getRow()][j].setPlankIndex(plankList.indexOf(plank));
-                    plank.span[size] = gameGrid[stumpA.getRow()][j];
+                for(int j = colB+1;j < colA ;j++){
+                    gameGrid[rowA][j].setContent(Content.PLANK);
+                    gameGrid[rowA][j].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[rowA][j];
                     size++;
                 }
 
                 // set the plank's size and position
                 plank.size = size;
                 plank.setBounds(
-                        (stumpB.getCol()+1)*TILE_SIZE,stumpA.getRow()*TILE_SIZE,
+                        (colB+1)*TILE_SIZE,rowA*TILE_SIZE,
                         size*TILE_SIZE,TILE_SIZE
                 );
-            } else if(stumpB.getCol() > stumpA.getCol()) { // check if A comes before B and do the same as above
-                for(int j = stumpA.getCol()+1; j < stumpB.getCol(); j++){
-                    gameGrid[stumpA.getRow()][j].setContent(Content.PLANK);
-                    gameGrid[stumpA.getRow()][j].setPlankIndex(plankList.indexOf(plank));
-                    plank.span[size] = gameGrid[stumpA.getRow()][j];
+            } else if(colB > colA) { // check if A comes before B and do the same as above
+                for(int j = colA+1; j < colB; j++){
+                    gameGrid[rowA][j].setContent(Content.PLANK);
+                    gameGrid[rowA][j].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[rowA][j];
                     size++;
                 }
 
                 plank.size = size;
                 plank.setBounds(
-                        (stumpA.getCol()+1)*TILE_SIZE,stumpA.getRow()*TILE_SIZE,
+                        (colA+1)*TILE_SIZE,rowA*TILE_SIZE,
                         size*TILE_SIZE,TILE_SIZE
                 );
             }
-        } else if(stumpA.getCol() == stumpB.getCol()){ // check if stumpA and stumpB are in the same column and do the same as above
+        } else if(colA == colB){ // check if stumpA and stumpB are in the same column and do the same as above
             plank.setOrientation(-1);
 
-            if(stumpA.getRow() > stumpB.getRow()){
-                for(int i = stumpB.getRow()+1;i < stumpA.getRow();i++){
-                    gameGrid[i][stumpA.getCol()].setContent(Content.PLANK);
-                    gameGrid[i][stumpA.getCol()].setPlankIndex(plankList.indexOf(plank));
-                    plank.span[size] = gameGrid[i][stumpA.getCol()];
+            if(rowA > rowB){
+                for(int i = rowB+1;i < rowA;i++){
+                    gameGrid[i][colA].setContent(Content.PLANK);
+                    gameGrid[i][colA].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[i][colA];
                     size++;
                 }
 
                 plank.setBounds(
-                        stumpA.getCol()*TILE_SIZE,(stumpB.getRow()+1)*TILE_SIZE,
+                        colA*TILE_SIZE,(rowB+1)*TILE_SIZE,
                         TILE_SIZE,size * TILE_SIZE
                 );
 
                 plankPanel.add( plankList.get(plankList.size()-1));
-            } else if (stumpB.getRow() > stumpA.getRow()){
-                for(int i = stumpA.getRow()+1;i < stumpB.getRow();i++) {
-                    gameGrid[i][stumpA.getCol()].setContent(Content.PLANK);
-                    gameGrid[i][stumpA.getCol()].setPlankIndex(plankList.indexOf(plank));
-                    plank.span[size] = gameGrid[i][stumpA.getCol()];
+            } else if (rowB > rowA){
+                for(int i = rowA+1;i < rowB;i++) {
+                    gameGrid[i][colA].setContent(Content.PLANK);
+                    gameGrid[i][colA].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[i][colA];
                     size++;
                 }
 
                 plank.size = size;
                 plank.setBounds(
-                        stumpA.getCol()*TILE_SIZE,(stumpA.getRow()+1)*TILE_SIZE,
+                        colA*TILE_SIZE,(rowA+1)*TILE_SIZE,
                         TILE_SIZE,size*TILE_SIZE
                 );
             }
@@ -249,10 +255,11 @@ public class GameMap extends JLayeredPane {
         player.setLocation(col * TILE_SIZE,row * TILE_SIZE);
     }
 
+
     /**
      * This class contains and controls a single tile of the game grid.
      */
-    private class GameTile extends JLabel{
+    private class GameTile extends JButton{
         private Content content; // type of content the tile holds
         private int row;
         private int col;
@@ -265,10 +272,13 @@ public class GameMap extends JLayeredPane {
          * @param col column position of the tile
          */
         private GameTile(Content content, int row, int col) {
+            setBorder(BorderFactory.createEmptyBorder());
+
             this.content = content;
             this.row = row;
             this.col = col;
-            setContent(content);
+            if(content != null)
+                setContent(content);
         }
 
         /**
@@ -277,8 +287,7 @@ public class GameMap extends JLayeredPane {
          * @param col column position of the tile
          */
         private GameTile(int row, int col){
-            this.row = row;
-            this.col = col;
+            this(null,row,col);
         }
 
         /**
@@ -304,6 +313,7 @@ public class GameMap extends JLayeredPane {
                 case STUMP:
                     if (row < 1)
                         setIcon(stumpUPIcon);
+
                     else if (row > 11)
                         setIcon(stumpDBIcon);
                     else

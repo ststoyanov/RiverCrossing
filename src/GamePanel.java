@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 /**
  * Controls the user input and game output.
  */
-public class PlayGame extends javax.swing.JPanel {
+public class GamePanel extends javax.swing.JPanel {
     private JPanel parent;
     private JButton menuButton;
     private GameMap gameMap = new GameMap();
@@ -13,10 +13,10 @@ public class PlayGame extends javax.swing.JPanel {
     /**
      * Constructor. Load the game from a specified lvl.
      *
-     * @param parent parent panel of the PlayGame panel
+     * @param parent parent panel of the GamePanel panel
      * @param level  starting level
      */
-    public PlayGame(JPanel parent, int level) {
+    public GamePanel(JPanel parent, int level) {
         this.parent = parent;
         createGamePanel();
         loadGame(level);
@@ -25,18 +25,18 @@ public class PlayGame extends javax.swing.JPanel {
     /**
      * Constructor. Start the game from lvl 1.
      *
-     * @param parent
+     * @param parent parent panel of the GamePanel panel
      */
-    public PlayGame(JPanel parent) {
+    public GamePanel(JPanel parent) {
         this(parent, 1);
     }
 
     /**
-     * Create the PlayGame JPanel.
+     * Create the GamePanel
      */
     private void createGamePanel() {
         add(gameMap);
-
+        new GameControl(gameMap);
         menuButton = new JButton("Menu");
         add(menuButton);
         menuButton.addActionListener(new ActionListener() {
@@ -50,6 +50,7 @@ public class PlayGame extends javax.swing.JPanel {
         });
     }
 
+
     /**
      * Load the game at a lvl.
      *
@@ -58,4 +59,6 @@ public class PlayGame extends javax.swing.JPanel {
     private void loadGame(int level) {
         gameMap.loadLevel(level);
     }
+
+
 }

@@ -47,7 +47,7 @@ public class MenuPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 parent.removeAll();
-                parent.add(new PlayGame(parent, Integer.parseInt(e.getActionCommand())));
+                parent.add(new GamePanel(parent, Integer.parseInt(e.getActionCommand())));
                 parent.revalidate();
                 parent.repaint();
             }
