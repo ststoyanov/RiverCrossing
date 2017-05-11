@@ -21,14 +21,42 @@ public class GameMap extends JLayeredPane {
         LAND, WATER, STUMP, PLANK
     }
 
-    class Plank{
-        public int size = 0;
-        public int orientation = 0; // 0 for picked up, positive for horizontal and negative for vertical
+    private class Plank extends JLabel{
+        private int size;
+        private int orientation; // 0 for picked up, positive for horizontal and negative for vertical
+        private GameTile[] span = new GameTile[3]; // GameTiles the plank spans over
+
+        private Plank(int size, int orientation) {
+            this.size = size;
+            this.orientation = orientation;
+            if (orientation < 0) {
+                setIcon(vPlankIcon);
+            } else if (orientation > 0) {
+                setIcon(hPlankIcon);
+            }
+        }
+
+        private Plank(){
+            this(0,0);
+        }
+
+        public void setSize(int size) {
+            this.size = size;
+        }
+
+        public void setOrientation(int orientation) {
+            this.orientation = orientation;
+            if (orientation < 0) {
+                setIcon(vPlankIcon);
+            } else if (orientation > 0) {
+                setIcon(hPlankIcon);
+            }
+        }
     }
 
     private JPanel mapPanel, plankPanel;
     private JLabel player;
-    private ArrayList<JLabel> plankList = new ArrayList<>();
+    private ArrayList<Plank> plankList = new ArrayList<>();
 
     // The gameGrid held as a double array of GameTiles
     private GameTile[][] gameGrid = new GameTile[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS];
@@ -85,53 +113,131 @@ public class GameMap extends JLayeredPane {
                 }
                 addPlank(gameGrid[12][2],gameGrid[8][2]);
                 addPlank(gameGrid[8][2],gameGrid[6][2]);
+                addPlank(gameGrid[6][6],gameGrid[6][2]);
                 movePlayerTo(12,2);
         }
     }
 
     /**
-     * Place a plank between pointA and pointB
-     * @param pointA pointA of the plank
-     * @param pointB end of the plank
+     * Place a plank between stumpA and stumpB
+     * @param stumpA stumpA of the plank
+     * @param stumpB end of the plank
      */
-    public void addPlank(GameTile pointA, GameTile pointB){
-        if(pointA.getRow() == pointB.getRow()){
-            if(pointA.getCol() > pointB.getCol()){
-                for(int j = pointB.getCol()+1;j < pointA.getCol() ;j++){
-                    gameGrid[pointA.getRow()][j].setContent(Content.PLANK);
-                    plankList.add(new JLabel(hPlankIcon));
-                    plankList.get(plankList.size()-1).setBounds(
-                            j*TILE_SIZE,pointA.getRow()*TILE_SIZE,TILE_SIZE,TILE_SIZE);
-                    plankPanel.add( plankList.get(plankList.size()-1));
+    public void addPlank(GameTile stumpA, GameTile stumpB){
+        if(stumpA.content != Content.STUMP || stumpB.content != Content.STUMP) {
+            return;
+        }
+
+        Plank plank = new Plank(); // temp plank object
+        int size = 0; // temp size
+
+        plankPanel.add(plank); // add the plank to tha view
+        plankList.add(plank); // add the plank to the plankList
+
+        // check if stumpA and stumpB are in the same row
+        if(stumpA.getRow() == stumpB.getRow()){
+            // if so set orientation to 1 (horizontal)
+            plank.setOrientation(1);
+
+            // check if B comes before A
+            if(stumpA.getCol() > stumpB.getCol()){
+                // set the content of all tiles between A and B to PLANK
+                // add the tiles to the span of the plank
+                // also add the index of the plank to the tile
+                for(int j = stumpB.getCol()+1;j < stumpA.getCol() ;j++){
+                    gameGrid[stumpA.getRow()][j].setContent(Content.PLANK);
+                    gameGrid[stumpA.getRow()][j].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[stumpA.getRow()][j];
+                    size++;
                 }
-            } else {
-                for(int j = pointA.getCol()+1;j < pointB.getCol();j++){
-                    gameGrid[pointA.getRow()][j].setContent(Content.PLANK);
-                    plankList.add(new JLabel(hPlankIcon));
-                    plankList.get(plankList.size()-1).setBounds(
-                            pointA.getRow()*TILE_SIZE,j*TILE_SIZE,TILE_SIZE,TILE_SIZE);
-                    plankPanel.add( plankList.get(plankList.size()-1));
+
+                // set the plank's size and position
+                plank.size = size;
+                plank.setBounds(
+                        (stumpB.getCol()+1)*TILE_SIZE,stumpA.getRow()*TILE_SIZE,
+                        size*TILE_SIZE,TILE_SIZE
+                );
+            } else if(stumpB.getCol() > stumpA.getCol()) { // check if A comes before B and do the same as above
+                for(int j = stumpA.getCol()+1; j < stumpB.getCol(); j++){
+                    gameGrid[stumpA.getRow()][j].setContent(Content.PLANK);
+                    gameGrid[stumpA.getRow()][j].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[stumpA.getRow()][j];
+                    size++;
                 }
+
+                plank.size = size;
+                plank.setBounds(
+                        (stumpA.getCol()+1)*TILE_SIZE,stumpA.getRow()*TILE_SIZE,
+                        size*TILE_SIZE,TILE_SIZE
+                );
             }
-        } else if(pointA.getCol() == pointB.getCol()){
-            if(pointA.getRow() > pointB.getRow()){
-                for(int i = pointB.getRow()+1;i < pointA.getRow();i++){
-                    gameGrid[i][pointA.getCol()].setContent(Content.PLANK);
-                    plankList.add(new JLabel(vPlankIcon));
-                    plankList.get(plankList.size()-1).setBounds(
-                            pointA.getCol()*TILE_SIZE,i*TILE_SIZE,TILE_SIZE,TILE_SIZE);
-                    plankPanel.add( plankList.get(plankList.size()-1));
+        } else if(stumpA.getCol() == stumpB.getCol()){ // check if stumpA and stumpB are in the same column and do the same as above
+            plank.setOrientation(-1);
+
+            if(stumpA.getRow() > stumpB.getRow()){
+                for(int i = stumpB.getRow()+1;i < stumpA.getRow();i++){
+                    gameGrid[i][stumpA.getCol()].setContent(Content.PLANK);
+                    gameGrid[i][stumpA.getCol()].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[i][stumpA.getCol()];
+                    size++;
                 }
-            } else {
-                for(int i = pointA.getRow()+1;i < pointB.getRow();i++){
-                    gameGrid[i][pointA.getCol()].setContent(Content.PLANK);
-                    plankList.add(new JLabel(vPlankIcon));
-                    plankList.get(plankList.size()-1).setBounds(
-                            pointA.getCol()*TILE_SIZE,i*TILE_SIZE,TILE_SIZE,TILE_SIZE);
-                    plankPanel.add( plankList.get(plankList.size()-1));
+
+                plank.setBounds(
+                        stumpA.getCol()*TILE_SIZE,(stumpB.getRow()+1)*TILE_SIZE,
+                        TILE_SIZE,size * TILE_SIZE
+                );
+
+                plankPanel.add( plankList.get(plankList.size()-1));
+            } else if (stumpB.getRow() > stumpA.getRow()){
+                for(int i = stumpA.getRow()+1;i < stumpB.getRow();i++) {
+                    gameGrid[i][stumpA.getCol()].setContent(Content.PLANK);
+                    gameGrid[i][stumpA.getCol()].setPlankIndex(plankList.indexOf(plank));
+                    plank.span[size] = gameGrid[i][stumpA.getCol()];
+                    size++;
                 }
+
+                plank.size = size;
+                plank.setBounds(
+                        stumpA.getCol()*TILE_SIZE,(stumpA.getRow()+1)*TILE_SIZE,
+                        TILE_SIZE,size*TILE_SIZE
+                );
             }
         }
+    }
+
+    /**
+     * Remove a plank, accessing it from a singe tile
+     * @param plankTile tile part of the plank
+     */
+    public void removePlank(GameTile plankTile){
+        if(plankTile.content != Content.PLANK) {
+            return;
+        }
+
+        Plank plank = plankList.get(plankTile.plankIndex);
+
+        for(int i = 0; i < plank.size; i++){
+            plankTile.setContent(Content.WATER);
+        }
+
+        plankList.remove(plank);
+        plankPanel.remove(plank);
+    }
+
+    /**
+     * Remove a plank, accessing it by the two stumps surrounding it
+     * @param stumpA stump at one end of the plank
+     * @param stumpB stump at other end of the plank
+     */
+    public void removePlank(GameTile stumpA, GameTile stumpB){
+        if(stumpA.content != Content.STUMP || stumpB.content != Content.STUMP) {
+            return;
+        }
+
+        int plankRow = (stumpA.getRow() + stumpB.getRow())/2;
+        int plankCol = (stumpA.getCol()+stumpB.getCol())/2;
+
+        removePlank(gameGrid[plankRow][plankCol]);
     }
 
     /**
@@ -150,7 +256,7 @@ public class GameMap extends JLayeredPane {
         private Content content; // type of content the tile holds
         private int row;
         private int col;
-        private int plankIndex; // index of the plank placed on this field, -1 if no plank
+        private int plankIndex = -1; // index of the plank placed on this field, -1 if no plank
 
         /**
          * Constructor. Creates the GameTile with set coordinates and content.
@@ -202,6 +308,14 @@ public class GameMap extends JLayeredPane {
                         setIcon(stumpDBIcon);
                     else
                         setIcon(stumpIcon);
+                    break;
+                case PLANK:
+                    if(this.content != Content.WATER) {
+                        Random rand = new Random();
+                        int randW = rand.nextInt(40);
+                        if(randW > 3) randW = 0;
+                        setIcon(waterIcon[randW]);
+                    }
                     break;
             }
 
