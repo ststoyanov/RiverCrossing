@@ -21,44 +21,8 @@ public class GameMap extends JLayeredPane {
         LAND, WATER, STUMP, PLANK
     }
 
-    private class Plank extends JButton{
-        private int size;
-        private int orientation; // 0 for picked up, positive for horizontal and negative for vertical
-        private GameTile[] span = new GameTile[3]; // GameTiles the plank spans over
-
-        private Plank(int size, int orientation) {
-            setBorder(BorderFactory.createEmptyBorder());
-            setContentAreaFilled(false);
-
-            this.size = size;
-            this.orientation = orientation;
-            if (orientation < 0) {
-                setIcon(vPlankIcon);
-            } else if (orientation > 0) {
-                setIcon(hPlankIcon);
-            }
-        }
-
-        private Plank(){
-            this(0,0);
-        }
-
-        public void setSize(int size) {
-            this.size = size;
-        }
-
-        public void setOrientation(int orientation) {
-            this.orientation = orientation;
-            if (orientation < 0) {
-                setIcon(vPlankIcon);
-            } else if (orientation > 0) {
-                setIcon(hPlankIcon);
-            }
-        }
-    }
-
     private JPanel mapPanel, plankPanel;
-    private JLabel player;
+    public Player player;
     private ArrayList<Plank> plankList = new ArrayList<>();
 
     // The gameGrid held as a double array of GameTiles
@@ -84,7 +48,8 @@ public class GameMap extends JLayeredPane {
         add(plankPanel, new Integer(10));
 
         // playerPanel - shows the player
-        player = new JLabel(playerIcon);
+        player = new Player();
+        player.setFaceDir(GameControl.Direction.UP);
         player.setSize(TILE_SIZE,TILE_SIZE);
         add(player, new Integer(20));
 
@@ -252,9 +217,102 @@ public class GameMap extends JLayeredPane {
      * @param col grid column destination
      */
     public void movePlayerTo(int row, int col){
-        player.setLocation(col * TILE_SIZE,row * TILE_SIZE);
+        if(gameGrid[row][col].content != Content.STUMP && gameGrid[row][col].content != Content.PLANK ) {
+            return;
+        }
+        player.setLocationInGrid(row,col);
     }
 
+    public Content getTileContent(int row, int col){
+        if(row >= 0 && row < 13 && col >= 0 && col < 9)
+            return gameGrid[row][col].content;
+        else
+            return null;
+    }
+
+    class Player extends JLabel{
+        private int row;
+        private int col;
+        private GameControl.Direction faceDir;
+        private GameControl.Direction bodyDir;
+
+        public void setLocationInGrid(int row, int col){
+            this.col = col;
+            this.row = row;
+            setLocation(col * TILE_SIZE,row * TILE_SIZE);
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public void setCol(int col) {
+            this.col = col;
+            setLocation(col * TILE_SIZE,row * TILE_SIZE);
+        }
+
+        public int getRow() {
+            return row;
+        }
+        
+        public void setRow(int row) {
+            this.row = row;
+            setLocation(col * TILE_SIZE,row * TILE_SIZE);
+        }
+
+        public GameControl.Direction getFaceDir() {
+            return faceDir;
+        }
+
+        public void setFaceDir(GameControl.Direction faceDir) {
+            this.faceDir = faceDir;
+            setIcon(playerIcon[faceDir.ordinal()]);
+        }
+
+        public GameControl.Direction getBodyDir() {
+            return bodyDir;
+        }
+
+        public void setBodyDir(GameControl.Direction bodyDir) {
+            this.bodyDir = bodyDir;
+        }
+    }
+
+    private class Plank extends JButton{
+        private int size;
+        private int orientation; // 0 for picked up, positive for horizontal and negative for vertical
+        private GameTile[] span = new GameTile[3]; // GameTiles the plank spans over
+
+        private Plank(int size, int orientation) {
+            setBorder(BorderFactory.createEmptyBorder());
+            setContentAreaFilled(false);
+
+            this.size = size;
+            this.orientation = orientation;
+            if (orientation < 0) {
+                setIcon(vPlankIcon);
+            } else if (orientation > 0) {
+                setIcon(hPlankIcon);
+            }
+        }
+
+        private Plank(){
+            this(0,0);
+        }
+
+        public void setSize(int size) {
+            this.size = size;
+        }
+
+        public void setOrientation(int orientation) {
+            this.orientation = orientation;
+            if (orientation < 0) {
+                setIcon(vPlankIcon);
+            } else if (orientation > 0) {
+                setIcon(hPlankIcon);
+            }
+        }
+    }
 
     /**
      * This class contains and controls a single tile of the game grid.
@@ -391,5 +449,10 @@ public class GameMap extends JLayeredPane {
     public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.gif")); // horizontal plank
     public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.gif")); // vertical plank
 
-    public final ImageIcon playerIcon = new ImageIcon(getClass().getResource("man.gif"));
+    public final ImageIcon playerIcon[] = {
+            new ImageIcon(getClass().getResource("manL.png")),
+            new ImageIcon(getClass().getResource("manR.png")),
+            new ImageIcon(getClass().getResource("manU.png")),
+            new ImageIcon(getClass().getResource("manD.png"))
+    };
 }

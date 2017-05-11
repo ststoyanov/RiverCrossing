@@ -1,12 +1,12 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by zabraih on 11.05.2017.
  */
 public class GameControl {
     private  GameMap gameMap;
+    private GameMap.Player player;
 
     public enum Direction{
         LEFT, RIGHT, UP, DOWN
@@ -14,6 +14,7 @@ public class GameControl {
 
     public GameControl(GameMap gameMap){
         this.gameMap = gameMap;
+        this.player = gameMap.player;
         createInputControl();
     }
 
@@ -57,7 +58,44 @@ public class GameControl {
     }
 
     private void movePlayer(Direction dir){
-        gameMap.movePlayerTo(6,6);
+        if(dir != player.getFaceDir()){
+            player.setFaceDir(dir);
+        } else {
+            int rowPos = player.getRow();
+            int colPos = player.getCol();
+            if(dir == Direction.RIGHT) {
+                if(gameMap.getTileContent(rowPos, colPos + 1) == GameMap.Content.PLANK) {
+                    int i = player.getCol();
+                    do{
+                        i++;
+                        player.setCol(i);
+                    }while (gameMap.getTileContent(rowPos, i) != GameMap.Content.STUMP);
+                }
+            } else if(dir == Direction.LEFT){
+                if(gameMap.getTileContent(rowPos, colPos - 1) == GameMap.Content.PLANK) {
+                    int i = colPos;
+                    do{
+                        i--;
+                        player.setCol(i);
+                    } while(gameMap.getTileContent(rowPos, i) != GameMap.Content.STUMP);
+                }
+            } else if(dir == Direction.UP){
+                if(gameMap.getTileContent(rowPos - 1, colPos) == GameMap.Content.PLANK) {
+                    int i = rowPos;
+                    do{
+                        i--;
+                        player.setRow(i);
+                    } while(gameMap.getTileContent(i,colPos) != GameMap.Content.STUMP);
+                }
+            } else if(dir == Direction.DOWN){
+                if(gameMap.getTileContent(rowPos + 1, colPos) == GameMap.Content.PLANK) {
+                    int i = player.getRow();
+                    do{
+                        i++;
+                        player.setRow(i);
+                    }while (gameMap.getTileContent(i,colPos) != GameMap.Content.STUMP);
+                }
+            }
+        }
     }
-
 }
