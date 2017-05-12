@@ -64,7 +64,8 @@ public class GameMap extends JLayeredPane {
             case 1:
                 for (int i = 0; i < 13; i++) {
                     for (int j = 0; j < 9; j++) {
-                        if ((j == 2 && (i == 12 || i == 8 || i == 6)) || j == 6 && (i == 6 || i == 4 || i == 0)) {
+                        if ((j == 2 && (i == 12 || i == 8 || i == 6))
+                                || j == 6 && (i == 6 || i == 4 || i == 0)) {
                             gameGrid[i][j].setContent(GameTile.Content.STUMP);
                         } else if (i == 0 || i == 12) {
                             gameGrid[i][j].setContent(GameTile.Content.LAND);
@@ -75,7 +76,6 @@ public class GameMap extends JLayeredPane {
                 }
                 placePlank(gameGrid[12][2], gameGrid[8][2]);
                 placePlank(gameGrid[8][2], gameGrid[6][2]);
-                placePlank(gameGrid[6][6],gameGrid[6][2]);
                 movePlayerTo(gameGrid[12][2]);
                 break;
             case 5:
