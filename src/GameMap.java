@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  *  This class contains and controls a gameGrid of GameTiles as part of a JLayeredPanel.
@@ -49,7 +48,7 @@ public class GameMap extends JLayeredPane {
 
         // playerPanel - shows the player
         player = new Player();
-        player.setFaceDir(GameControl.Direction.UP);
+        player.setDirection(GameControl.Direction.UP);
         player.setSize(TILE_SIZE,TILE_SIZE);
         add(player, new Integer(20));
 
@@ -79,10 +78,17 @@ public class GameMap extends JLayeredPane {
                         }
                     }
                 }
-                addPlank(gameGrid[12][2],gameGrid[8][2]);
-                addPlank(gameGrid[8][2],gameGrid[6][2]);
-                addPlank(gameGrid[6][6],gameGrid[6][2]);
+                placePlank(gameGrid[12][2],gameGrid[8][2]);
+                placePlank(gameGrid[8][2],gameGrid[6][2]);
+                placePlank(gameGrid[6][6],gameGrid[6][2]);
                 movePlayerTo(12,2);
+        }
+    }
+
+    public GameTile getNextTile(Content content, GameControl.Direction direction){
+        for(GameTile i = getNextTile(direction); ; i = getNextTile(i,direction)){
+            if(i.getContent() == content)
+                return i;
         }
     }
 
@@ -91,9 +97,9 @@ public class GameMap extends JLayeredPane {
      * @param stumpA stumpA of the plank
      * @param stumpB end of the plank
      */
-    public void addPlank(GameTile stumpA, GameTile stumpB){
-        if(stumpA.content != Content.STUMP || stumpB.content != Content.STUMP) {
-            return;
+    public int placePlank(GameTile stumpA, GameTile stumpB){
+        if(stumpA.getContent() != Content.STUMP || stumpB.getContent() != Content.STUMP) {
+            return -1;
         }
 
         Plank plank = new Plank(); // temp plank object
@@ -117,7 +123,7 @@ public class GameMap extends JLayeredPane {
                 // also add the index of the plank to the tile
                 for(int j = colB+1;j < colA ;j++){
                     gameGrid[rowA][j].setContent(Content.PLANK);
-                    gameGrid[rowA][j].setPlankIndex(plankList.indexOf(plank));
+                    gameGrid[rowA][j].setPlankPiece(plank);
                     plank.span[size] = gameGrid[rowA][j];
                     size++;
                 }
@@ -131,7 +137,7 @@ public class GameMap extends JLayeredPane {
             } else if(colB > colA) { // check if A comes before B and do the same as above
                 for(int j = colA+1; j < colB; j++){
                     gameGrid[rowA][j].setContent(Content.PLANK);
-                    gameGrid[rowA][j].setPlankIndex(plankList.indexOf(plank));
+                    gameGrid[rowA][j].setPlankPiece(plank);
                     plank.span[size] = gameGrid[rowA][j];
                     size++;
                 }
@@ -148,11 +154,12 @@ public class GameMap extends JLayeredPane {
             if(rowA > rowB){
                 for(int i = rowB+1;i < rowA;i++){
                     gameGrid[i][colA].setContent(Content.PLANK);
-                    gameGrid[i][colA].setPlankIndex(plankList.indexOf(plank));
+                    gameGrid[i][colA].setPlankPiece(plank);
                     plank.span[size] = gameGrid[i][colA];
                     size++;
                 }
 
+                plank.size = size;
                 plank.setBounds(
                         colA*TILE_SIZE,(rowB+1)*TILE_SIZE,
                         TILE_SIZE,size * TILE_SIZE
@@ -162,7 +169,7 @@ public class GameMap extends JLayeredPane {
             } else if (rowB > rowA){
                 for(int i = rowA+1;i < rowB;i++) {
                     gameGrid[i][colA].setContent(Content.PLANK);
-                    gameGrid[i][colA].setPlankIndex(plankList.indexOf(plank));
+                    gameGrid[i][colA].setPlankPiece(plank);
                     plank.span[size] = gameGrid[i][colA];
                     size++;
                 }
@@ -174,25 +181,31 @@ public class GameMap extends JLayeredPane {
                 );
             }
         }
+        return 1;
     }
 
     /**
      * Remove a plank, accessing it from a singe tile
      * @param plankTile tile part of the plank
      */
-    public void removePlank(GameTile plankTile){
-        if(plankTile.content != Content.PLANK) {
-            return;
+    public int removePlank(GameTile plankTile){
+        if(plankTile.getContent() != Content.PLANK) {
+            return 0;
         }
 
-        Plank plank = plankList.get(plankTile.plankIndex);
+        Plank plank = plankTile.getPlankPiece();
+        System.out.print(plank.size);
 
         for(int i = 0; i < plank.size; i++){
-            plankTile.setContent(Content.WATER);
+            plank.span[i].setContent(Content.WATER);
         }
 
         plankList.remove(plank);
         plankPanel.remove(plank);
+        revalidate();
+        repaint();
+
+        return plank.size;
     }
 
     /**
@@ -200,15 +213,15 @@ public class GameMap extends JLayeredPane {
      * @param stumpA stump at one end of the plank
      * @param stumpB stump at other end of the plank
      */
-    public void removePlank(GameTile stumpA, GameTile stumpB){
-        if(stumpA.content != Content.STUMP || stumpB.content != Content.STUMP) {
-            return;
+    public int removePlank(GameTile stumpA, GameTile stumpB){
+        if(stumpA.getContent() != Content.STUMP || stumpB.getContent() != Content.STUMP) {
+            return 0;
         }
 
         int plankRow = (stumpA.getRow() + stumpB.getRow())/2;
         int plankCol = (stumpA.getCol()+stumpB.getCol())/2;
 
-        removePlank(gameGrid[plankRow][plankCol]);
+        return(removePlank(gameGrid[plankRow][plankCol]));
     }
 
     /**
@@ -217,29 +230,62 @@ public class GameMap extends JLayeredPane {
      * @param col grid column destination
      */
     public void movePlayerTo(int row, int col){
-        if(gameGrid[row][col].content != Content.STUMP && gameGrid[row][col].content != Content.PLANK ) {
+        if(gameGrid[row][col].getContent() != Content.STUMP && gameGrid[row][col].getContent() != Content.PLANK ) {
             return;
         }
         player.setLocationInGrid(row,col);
     }
 
+    public void movePlayerTo(GameTile tile){
+        movePlayerTo(tile.getRow(),tile.getCol());
+    }
+
+    public GameTile getNextTile(GameTile tile, GameControl.Direction dir){
+        if(dir == GameControl.Direction.LEFT) {
+            return gameGrid[tile.getRow()][tile.getCol()-1];
+        } else if(dir == GameControl.Direction.RIGHT){
+            return gameGrid[tile.getRow()][tile.getCol()+1];
+        } else if(dir == GameControl.Direction.UP){
+            return gameGrid[tile.getRow()-1][tile.getCol()];
+        } else if(dir == GameControl.Direction.DOWN){
+            return gameGrid[tile.getRow()+1][tile.getCol()];
+        }
+        return null;
+    }
+
+    public GameTile getNextTile(GameControl.Direction dir){
+        return getNextTile(player.getTile(),dir);
+    }
+
     public Content getTileContent(int row, int col){
         if(row >= 0 && row < 13 && col >= 0 && col < 9)
-            return gameGrid[row][col].content;
+            return gameGrid[row][col].getContent();
         else
             return null;
+    }
+
+    public Content getTileContent(GameTile tile){
+        return getTileContent(tile.getRow(),tile.getCol());
     }
 
     class Player extends JLabel{
         private int row;
         private int col;
-        private GameControl.Direction faceDir;
-        private GameControl.Direction bodyDir;
+        private GameControl.Direction direction;
+        public int plankHeldSize = 0;
 
         public void setLocationInGrid(int row, int col){
             this.col = col;
             this.row = row;
             setLocation(col * TILE_SIZE,row * TILE_SIZE);
+        }
+
+        public void setLocationInGrid(GameTile tile){
+            setLocationInGrid(tile.getRow(),tile.getCol());
+        }
+
+        public GameTile getTile(){
+            return gameGrid[row][col];
         }
 
         public int getCol() {
@@ -260,25 +306,17 @@ public class GameMap extends JLayeredPane {
             setLocation(col * TILE_SIZE,row * TILE_SIZE);
         }
 
-        public GameControl.Direction getFaceDir() {
-            return faceDir;
+        public GameControl.Direction getDirection() {
+            return direction;
         }
 
-        public void setFaceDir(GameControl.Direction faceDir) {
-            this.faceDir = faceDir;
-            setIcon(playerIcon[faceDir.ordinal()]);
-        }
-
-        public GameControl.Direction getBodyDir() {
-            return bodyDir;
-        }
-
-        public void setBodyDir(GameControl.Direction bodyDir) {
-            this.bodyDir = bodyDir;
+        public void setDirection(GameControl.Direction direction) {
+            this.direction = direction;
+            setIcon(playerIcon[direction.ordinal()]);
         }
     }
 
-    private class Plank extends JButton{
+    class Plank extends JButton{
         private int size;
         private int orientation; // 0 for picked up, positive for horizontal and negative for vertical
         private GameTile[] span = new GameTile[3]; // GameTiles the plank spans over
@@ -300,11 +338,11 @@ public class GameMap extends JLayeredPane {
             this(0,0);
         }
 
-        public void setSize(int size) {
+        private void setSize(int size) {
             this.size = size;
         }
 
-        public void setOrientation(int orientation) {
+        private void setOrientation(int orientation) {
             this.orientation = orientation;
             if (orientation < 0) {
                 setIcon(vPlankIcon);
@@ -314,145 +352,13 @@ public class GameMap extends JLayeredPane {
         }
     }
 
-    /**
-     * This class contains and controls a single tile of the game grid.
-     */
-    private class GameTile extends JButton{
-        private Content content; // type of content the tile holds
-        private int row;
-        private int col;
-        private int plankIndex = -1; // index of the plank placed on this field, -1 if no plank
-
-        /**
-         * Constructor. Creates the GameTile with set coordinates and content.
-         * @param content type of content the tile holds
-         * @param row row position of the tile
-         * @param col column position of the tile
-         */
-        private GameTile(Content content, int row, int col) {
-            setBorder(BorderFactory.createEmptyBorder());
-
-            this.content = content;
-            this.row = row;
-            this.col = col;
-            if(content != null)
-                setContent(content);
-        }
-
-        /**
-         * Constructor. Creates the GameTile with set coordinates and no content.
-         * @param row row position of the tile
-         * @param col column position of the tile
-         */
-        private GameTile(int row, int col){
-            this(null,row,col);
-        }
-
-        /**
-         * Sets the content of the tile.
-         * @param content new tile content type
-         */
-        private void setContent(Content content) {
-            switch (content) {
-                case LAND:
-                    if (row < 1)
-                        setIcon(bankDownIcon);
-                    else
-                        setIcon(bankUpIcon);
-                    break;
-                case WATER:
-                    if(this.content != Content.PLANK) {
-                        Random rand = new Random();
-                        int randW = rand.nextInt(40);
-                        if(randW > 3) randW = 0;
-                        setIcon(waterIcon[randW]);
-                    }
-                    break;
-                case STUMP:
-                    if (row < 1)
-                        setIcon(stumpUPIcon);
-
-                    else if (row > 11)
-                        setIcon(stumpDBIcon);
-                    else
-                        setIcon(stumpIcon);
-                    break;
-                case PLANK:
-                    if(this.content != Content.WATER) {
-                        Random rand = new Random();
-                        int randW = rand.nextInt(40);
-                        if(randW > 3) randW = 0;
-                        setIcon(waterIcon[randW]);
-                    }
-                    break;
-            }
-
-            this.content = content;
-        }
-
-        /**
-         * Get the index of the plank contained. Return -1 if no plank contained.
-         * @return plankIndex index of the plank in the plankList
-         */
-        public int getPlankIndex() {
-            return plankIndex;
-        }
-
-        /**
-         * Set the index of the plank held by this tile. Set to -1 if no plank to be contained.
-         * @param plankIndex index of the plank in the plankList
-         */
-        public void setPlankIndex(int plankIndex) {
-            this.plankIndex = plankIndex;
-        }
-
-        /**
-         * Get the row position of the tile
-         * @return row position of the tile
-         */
-        public int getRow() {
-            return row;
-        }
-
-        /**
-         * Get the column position of the tile
-         * @return column position of the tile
-         */
-        public int getCol() {
-            return col;
-        }
-
-        /**
-         * Get the current type of content of the tile
-         * @return content of the tile
-         */
-        public Content getContent() {
-            return content;
-        }
-    }
-
-    // Code for loading the resources for the rest of the class
-    public final ImageIcon bankUpIcon = new ImageIcon(getClass().getResource("bank1.jpg"));
-    public final ImageIcon bankDownIcon = new ImageIcon(getClass().getResource("bank2.jpg"));
-
-    public final ImageIcon waterIcon[] = {
-            new ImageIcon(getClass().getResource("water1.jpg")),
-            new ImageIcon(getClass().getResource("water2.jpg")),
-            new ImageIcon(getClass().getResource("water3.jpg")),
-            new ImageIcon(getClass().getResource("water4.jpg"))
-    };
-
-    public final ImageIcon stumpIcon = new ImageIcon(getClass().getResource("stump1.jpg"));
-    public final ImageIcon stumpDBIcon = new ImageIcon(getClass().getResource("stump2.jpg")); // downside bank stump
-    public final ImageIcon stumpUPIcon = new ImageIcon(getClass().getResource("stump3.jpg")); // upper bank stump
-
-    public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.gif")); // horizontal plank
-    public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.gif")); // vertical plank
-
     public final ImageIcon playerIcon[] = {
             new ImageIcon(getClass().getResource("manL.png")),
             new ImageIcon(getClass().getResource("manR.png")),
             new ImageIcon(getClass().getResource("manU.png")),
             new ImageIcon(getClass().getResource("manD.png"))
     };
+
+    public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.gif")); // horizontal plank
+    public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.gif")); // vertical plank
 }
