@@ -306,7 +306,6 @@ public class GameMap extends JLayeredPane {
                 (stumpA.getRow() == stumpB.getRow() && size == Math.abs(stumpA.getCol() - stumpB.getCol()) - 1)){
             return placePlank(stumpA,stumpB);
         } else {
-            System.out.print(size);
             return -1;
         }
     }
@@ -418,6 +417,7 @@ public class GameMap extends JLayeredPane {
         private Plank(int size, int orientation) {
             setBorder(BorderFactory.createEmptyBorder());
             setContentAreaFilled(false);
+            setFocusable(false);
 
             this.size = size;
             this.orientation = orientation;

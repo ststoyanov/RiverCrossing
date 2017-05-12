@@ -23,6 +23,7 @@ public class GameTile extends JButton {
      */
     public GameTile(Content content, int row, int col) {
         setBorder(BorderFactory.createEmptyBorder());
+        setFocusable(false);
 
         this.content = content;
         this.row = row;

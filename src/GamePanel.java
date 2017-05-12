@@ -38,6 +38,7 @@ public class GamePanel extends javax.swing.JPanel {
         add(gameMap);
         new GameControl(gameMap);
         menuButton = new JButton("Menu");
+        menuButton.setFocusable(false);
         add(menuButton);
         menuButton.addActionListener(new ActionListener() {
             @Override
