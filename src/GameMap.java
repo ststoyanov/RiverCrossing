@@ -75,6 +75,7 @@ public class GameMap extends JLayeredPane {
                 }
                 placePlank(gameGrid[12][2], gameGrid[8][2]);
                 placePlank(gameGrid[8][2], gameGrid[6][2]);
+                placePlank(gameGrid[6][6],gameGrid[6][2]);
                 movePlayerTo(gameGrid[12][2]);
                 break;
             case 5:
@@ -197,6 +198,17 @@ public class GameMap extends JLayeredPane {
     public int placePlank(GameTile stumpA, GameTile stumpB){
         if(stumpA.getContent() != GameTile.Content.STUMP || stumpB.getContent() != GameTile.Content.STUMP) {
             return -1;
+        }
+
+        for(GameControl.Direction dir : GameControl.Direction.values()) {
+            if (getNextTile(stumpA, dir, GameTile.Content.STUMP) == stumpB) {
+                GameTile tempTile = stumpA;
+                while (tempTile != stumpB){
+                    tempTile = getNextTile(tempTile,dir);
+                    if(tempTile.getContent() == GameTile.Content.PLANK)
+                        return -1;
+                }
+            }
         }
 
         Plank plank = new Plank(); // temp plank object

@@ -9,7 +9,18 @@ public class GameControl {
     private Player player;
 
     public enum Direction{
-        LEFT, RIGHT, UP, DOWN
+        LEFT, RIGHT, UP, DOWN;
+
+        static Direction getReverse(Direction direction){
+            if(direction == LEFT)
+                return RIGHT;
+            if(direction == RIGHT)
+                return LEFT;
+            if(direction == UP)
+                return DOWN;
+
+                return UP;
+        }
     }
 
     /**
