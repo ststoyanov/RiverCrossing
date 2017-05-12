@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Class controlling the user input and the logic of the game.
@@ -94,7 +95,7 @@ public class GameControl {
             if(gameMap.getNextTile(player.getTile(),direction).getContent() == GameTile.Content.PLANK) {
                 gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(), direction, GameTile.Content.STUMP));
                 if(player.getTile() == gameMap.getWinTile()){
-                    gameMap.winMessage();
+                    displayWinMessage();
                     gameMap.getActionMap().clear();
                 }
             }
@@ -111,5 +112,39 @@ public class GameControl {
                 player.setPlankHeldSize(gameMap.removePlank(player.getTile(), player.getDirection()));
             }
         }
+    }
+
+    public void displayWinMessage(){
+        JPanel winPanel = new JPanel();
+        JPanel parent = (JPanel) gameMap.getParent();
+
+        JButton menuButton = new JButton("Menu");
+        JButton restartButton = new JButton("Restart Level");
+        winPanel.setBounds(gameMap.TILE_SIZE*gameMap.NUMBER_OF_COLUMNS/2 - 100,gameMap.TILE_SIZE*gameMap.NUMBER_OF_ROWS/2 + - 40,200,80);
+
+        winPanel.add(new JLabel("Congratulations, level " + gameMap.getCurrentLevel() + " completed!"));
+        winPanel.add(menuButton);
+        winPanel.add(restartButton);
+        menuButton.requestFocusInWindow();
+
+        gameMap.add(winPanel,new Integer(100));
+
+        menuButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                parent.removeAll();
+                parent.add(new MenuPanel(parent));
+                parent.revalidate();
+                parent.repaint();
+            }
+        });
+
+        restartButton.addActionListener((new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                gameMap.remove(winPanel);
+                gameMap.loadLevel(gameMap.getCurrentLevel());
+            }
+        }));
     }
 }

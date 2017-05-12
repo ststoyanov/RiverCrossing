@@ -61,6 +61,10 @@ public class GameMap extends JLayeredPane {
         add(player, new Integer(20));
     }
 
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
     /**
      * Get the first tile in a certain direction.
      * @param tile initial tile
@@ -335,40 +339,6 @@ public class GameMap extends JLayeredPane {
         return gameGrid[winRow][winCol];
     }
 
-    public void winMessage(){
-        JPanel winPanel = new JPanel();
-        JPanel parent = (JPanel) getParent();
-
-        JButton menuButton = new JButton("Menu");
-        JButton restartButton = new JButton("Restart Level");
-        winPanel.setBounds(TILE_SIZE*NUMBER_OF_COLUMNS/2 - 100,TILE_SIZE*NUMBER_OF_ROWS/2 + - 40,200,80);
-
-        winPanel.add(new JLabel("Congratulations, level " + currentLevel + " completed!"));
-        winPanel.add(menuButton);
-        winPanel.add(restartButton);
-        menuButton.requestFocusInWindow();
-
-        this.add(winPanel,new Integer(100));
-
-        menuButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                parent.removeAll();
-                parent.add(new MenuPanel(parent));
-                parent.revalidate();
-                parent.repaint();
-            }
-        });
-
-        restartButton.addActionListener((new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                remove(winPanel);
-                loadLevel(currentLevel);
-            }
-        }));
-
-    }
 
     /**
      * Load a level. Populates the gameGrid with content, predefined for each level.
