@@ -2,22 +2,29 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 
 /**
- * Created by zabraih on 11.05.2017.
+ * Class controlling the user input and the logic of the game.
  */
 public class GameControl {
     private  GameMap gameMap;
-    private GameMap.Player player;
+    private Player player;
 
     public enum Direction{
         LEFT, RIGHT, UP, DOWN
     }
 
+    /**
+     * Constructor. Creates a game control for a GameMap
+     * @param gameMap gameMap to be played in
+     */
     public GameControl(GameMap gameMap){
         this.gameMap = gameMap;
         this.player = gameMap.player;
         createInputControl();
     }
 
+    /**
+     * Create the control for user input. Set InputMap and ActionMap.
+     */
     private void createInputControl(){
         gameMap.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), "left");
         gameMap.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), "right");
@@ -65,55 +72,27 @@ public class GameControl {
         });
     }
 
-    private void movePlayer(Direction dir){
-        if(dir != player.getDirection()){
-            player.setDirection(dir);
-        } else {
-            int rowPos = player.getRow();
-            int colPos = player.getCol();
-            if(dir == Direction.RIGHT) {
-                if(gameMap.getTileContent(rowPos, colPos + 1) == GameMap.Content.PLANK) {
-                    int i = player.getCol();
-                    do{
-                        i++;
-                        player.setCol(i);
-                    }while (gameMap.getTileContent(rowPos, i) != GameMap.Content.STUMP);
-                }
-            } else if(dir == Direction.LEFT){
-                if(gameMap.getTileContent(rowPos, colPos - 1) == GameMap.Content.PLANK) {
-                    int i = colPos;
-                    do{
-                        i--;
-                        player.setCol(i);
-                    } while(gameMap.getTileContent(rowPos, i) != GameMap.Content.STUMP);
-                }
-            } else if(dir == Direction.UP){
-                if(gameMap.getTileContent(rowPos - 1, colPos) == GameMap.Content.PLANK) {
-                    int i = rowPos;
-                    do{
-                        i--;
-                        player.setRow(i);
-                    } while(gameMap.getTileContent(i,colPos) != GameMap.Content.STUMP);
-                }
-            } else if(dir == Direction.DOWN){
-                if(gameMap.getTileContent(rowPos + 1, colPos) == GameMap.Content.PLANK) {
-                    int i = player.getRow();
-                    do{
-                        i++;
-                        player.setRow(i);
-                    }while (gameMap.getTileContent(i,colPos) != GameMap.Content.STUMP);
-                }
-            }
+    /**
+     * Move the player in a direction or change his facing direction
+     * @param direction direction for player movement or face
+     */
+    private void movePlayer(Direction direction){
+        if(direction != player.getDirection()){
+            player.setDirection(direction);
+        } else if(gameMap.getNextTile(player.getTile(),direction).getContent() == GameTile.Content.PLANK){
+            gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(),direction, GameTile.Content.STUMP));
         }
     }
 
     private void plankInteraction(){
-        Direction dir = player.getDirection();
-        if(player.plankHeldSize > 0){
-            if(gameMap.placePlank(player.getTile(), gameMap.getNextTile(GameMap.Content.STUMP, dir)) > 0)
-                player.plankHeldSize = 0;
-        } else if(gameMap.getTileContent(gameMap.getNextTile(dir)) == GameMap.Content.PLANK){
-            player.plankHeldSize = gameMap.removePlank(gameMap.getNextTile(dir));
+        if(player.getPlankHeldSize() > 0){
+            if(gameMap.placePlank(player.getTile(),player.getDirection(),player.getPlankHeldSize()) > 0) {
+                player.setPlankHeldSize(0);
+            }
+        } else{
+            if(gameMap.getNextTile(player.getTile(),player.getDirection()).getContent() == GameTile.Content.PLANK) {
+                player.setPlankHeldSize(gameMap.removePlank(player.getTile(),player.getDirection()));
+            }
         }
     }
 }

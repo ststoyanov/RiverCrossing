@@ -15,11 +15,6 @@ public class GameMap extends JLayeredPane {
     public static final int NUMBER_OF_ROWS = 13;
     public static final int NUMBER_OF_COLUMNS = 9;
 
-    // Types of content the gameGrid can contain
-    public enum Content{
-        LAND, WATER, STUMP, PLANK
-    }
-
     private JPanel mapPanel, plankPanel;
     public Player player;
     private ArrayList<Plank> plankList = new ArrayList<>();
@@ -39,6 +34,13 @@ public class GameMap extends JLayeredPane {
         mapPanel = new JPanel(new GridLayout(NUMBER_OF_ROWS,NUMBER_OF_COLUMNS));
         mapPanel.setBounds(0,0,NUMBER_OF_COLUMNS * TILE_SIZE,NUMBER_OF_ROWS * TILE_SIZE);
         add(mapPanel, DEFAULT_LAYER);
+        // Add each tile of the gameGrid to the mapPanel
+        for(int i = 0; i < NUMBER_OF_ROWS; i++) {
+            for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
+                gameGrid[i][j] = new GameTile(i, j);
+                mapPanel.add(gameGrid[i][j]);
+            }
+        }
 
         // plankPanel - shows the planks
         plankPanel = new JPanel(null);
@@ -51,13 +53,6 @@ public class GameMap extends JLayeredPane {
         player.setDirection(GameControl.Direction.UP);
         player.setSize(TILE_SIZE,TILE_SIZE);
         add(player, new Integer(20));
-
-        // Add each tile of the gameGrid to the mapPanel
-        for(int i = 0; i < NUMBER_OF_ROWS; i++)
-            for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
-                gameGrid[i][j] = new GameTile(i, j);
-                mapPanel.add(gameGrid[i][j]);
-            }
     }
 
     /**
@@ -67,38 +62,140 @@ public class GameMap extends JLayeredPane {
     public void loadLevel(int level) {
         switch(level){
             case 1:
-                for(int i = 0; i < 13; i++) {
+                for (int i = 0; i < 13; i++) {
                     for (int j = 0; j < 9; j++) {
                         if ((j == 2 && (i == 12 || i == 8 || i == 6)) || j == 6 && (i == 6 || i == 4 || i == 0)) {
-                            gameGrid[i][j].setContent(Content.STUMP);
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
                         } else if (i == 0 || i == 12) {
-                            gameGrid[i][j].setContent(Content.LAND);
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
                         } else {
-                            gameGrid[i][j].setContent(Content.WATER);
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
                         }
                     }
                 }
-                placePlank(gameGrid[12][2],gameGrid[8][2]);
-                placePlank(gameGrid[8][2],gameGrid[6][2]);
-                placePlank(gameGrid[6][6],gameGrid[6][2]);
-                movePlayerTo(12,2);
-        }
-    }
-
-    public GameTile getNextTile(Content content, GameControl.Direction direction){
-        for(GameTile i = getNextTile(direction); ; i = getNextTile(i,direction)){
-            if(i.getContent() == content)
-                return i;
+                placePlank(gameGrid[12][2], gameGrid[8][2]);
+                placePlank(gameGrid[8][2], gameGrid[6][2]);
+                movePlayerTo(gameGrid[12][2]);
+                break;
+            case 5:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if ((j == 0 && (i == 10 || i == 8 || i == 6 || i == 2)) ||
+                                j == 4 && (i == 12 || i == 8 || i == 4 || i == 0) ||
+                                i == 6 && (j == 2 || j == 6)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][4], gameGrid[8][4]);
+                placePlank(gameGrid[10][0], gameGrid[8][0]);
+                placePlank(gameGrid[6][2] , gameGrid[6][6]);
+                movePlayerTo(gameGrid[12][4]);
+                break;
+            case 20:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if ((j == 0 && (i == 10 || i == 6) ||
+                                j == 2 && (i == 12 || i == 8 || i == 2) ||
+                                j == 4 && (i == 10 || i == 4)) ||
+                                j == 6 && (i == 8 || i == 6 || i == 4 || i == 0) ||
+                                j == 8 && (i == 10 || i == 8 || i == 2)){
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][2], gameGrid[8][2]);
+                placePlank(gameGrid[8][2], gameGrid[2][2]);
+                placePlank(gameGrid[10][8] , gameGrid[8][8]);
+                movePlayerTo(gameGrid[12][2]);
+                break;
+            case 40:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if ((j == 0 && (i == 10 || i == 6 || i == 2) ||
+                                j == 2 && (i == 12 || i == 10 || i == 4 || i == 0) ||
+                                j == 4 && (i == 10 || i == 6)) ||
+                                j == 6 && (i == 8 || i == 2) ||
+                                j == 8 && (i == 10 || i == 6 || i == 4 || i == 2)){
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[10][0], gameGrid[6][0]);
+                placePlank(gameGrid[12][2], gameGrid[10][2]);
+                placePlank(gameGrid[8][6] , gameGrid[2][6]);
+                placePlank(gameGrid[10][8], gameGrid[6][8]);
+                movePlayerTo(gameGrid[12][2]);
+                break;
         }
     }
 
     /**
+     * Get the first tile in a certain direction.
+     * @param tile initial tile
+     * @param direction direction from the initial tile
+     * @return first GameTile in the direction from the initial tile
+     */
+    public GameTile getNextTile(GameTile tile, GameControl.Direction direction){
+        if(direction == GameControl.Direction.LEFT) {
+            if(tile.getCol()-1 >= 0)
+                return gameGrid[tile.getRow()][tile.getCol()-1];
+        } else if(direction == GameControl.Direction.RIGHT){
+            if(tile.getCol()+1 < 9)
+                return gameGrid[tile.getRow()][tile.getCol()+1];
+        } else if(direction == GameControl.Direction.UP){
+            if(tile.getRow()-1 >= 0)
+                return gameGrid[tile.getRow()-1][tile.getCol()];
+        } else if(direction == GameControl.Direction.DOWN){
+            if(tile.getRow()+1 < 13)
+                return gameGrid[tile.getRow()+1][tile.getCol()];
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the first tile in a certain direction with a specified content.
+     *
+     * @param tile initial tile
+     * @param direction direction from the initial tile
+     * @param content content to be searched for
+     * @return first GameTile in the direction from the initial tile containing the specified content
+     */
+    public GameTile getNextTile(GameTile tile, GameControl.Direction direction, GameTile.Content content){
+        GameTile tempTile = tile;
+        do{
+            tempTile = getNextTile(tempTile,direction);
+            if(tempTile == null)
+                return tile;
+
+            if(tempTile.getContent() == content)
+                return tempTile;
+
+        }while (true);
+    }
+
+    /**
      * Place a plank between stumpA and stumpB
-     * @param stumpA stumpA of the plank
-     * @param stumpB end of the plank
+     *
+     * @param stumpA stump at one end of the plank
+     * @param stumpB stump at other end of the plank
+     * @return 1 if successful, -1 if unsuccessful
      */
     public int placePlank(GameTile stumpA, GameTile stumpB){
-        if(stumpA.getContent() != Content.STUMP || stumpB.getContent() != Content.STUMP) {
+        if(stumpA.getContent() != GameTile.Content.STUMP || stumpB.getContent() != GameTile.Content.STUMP) {
             return -1;
         }
 
@@ -122,7 +219,7 @@ public class GameMap extends JLayeredPane {
                 // add the tiles to the span of the plank
                 // also add the index of the plank to the tile
                 for(int j = colB+1;j < colA ;j++){
-                    gameGrid[rowA][j].setContent(Content.PLANK);
+                    gameGrid[rowA][j].setContent(GameTile.Content.PLANK);
                     gameGrid[rowA][j].setPlankPiece(plank);
                     plank.span[size] = gameGrid[rowA][j];
                     size++;
@@ -136,7 +233,7 @@ public class GameMap extends JLayeredPane {
                 );
             } else if(colB > colA) { // check if A comes before B and do the same as above
                 for(int j = colA+1; j < colB; j++){
-                    gameGrid[rowA][j].setContent(Content.PLANK);
+                    gameGrid[rowA][j].setContent(GameTile.Content.PLANK);
                     gameGrid[rowA][j].setPlankPiece(plank);
                     plank.span[size] = gameGrid[rowA][j];
                     size++;
@@ -153,7 +250,7 @@ public class GameMap extends JLayeredPane {
 
             if(rowA > rowB){
                 for(int i = rowB+1;i < rowA;i++){
-                    gameGrid[i][colA].setContent(Content.PLANK);
+                    gameGrid[i][colA].setContent(GameTile.Content.PLANK);
                     gameGrid[i][colA].setPlankPiece(plank);
                     plank.span[size] = gameGrid[i][colA];
                     size++;
@@ -168,7 +265,7 @@ public class GameMap extends JLayeredPane {
                 plankPanel.add( plankList.get(plankList.size()-1));
             } else if (rowB > rowA){
                 for(int i = rowA+1;i < rowB;i++) {
-                    gameGrid[i][colA].setContent(Content.PLANK);
+                    gameGrid[i][colA].setContent(GameTile.Content.PLANK);
                     gameGrid[i][colA].setPlankPiece(plank);
                     plank.span[size] = gameGrid[i][colA];
                     size++;
@@ -185,19 +282,61 @@ public class GameMap extends JLayeredPane {
     }
 
     /**
-     * Remove a plank, accessing it from a singe tile
+     * Place a plank of a specified size between stumpA and stumpB
+     *
+     * @param stumpA stump at one end of the plank
+     * @param stumpB stump at other end of the plank
+     * @param size size of the plank
+     * @return 1 if successful, -1 if unsuccessful
+     */
+    public int placePlank(GameTile stumpA, GameTile stumpB, int size){
+        if((stumpA.getCol() == stumpA.getCol() && size == Math.abs(stumpA.getRow() - stumpB.getRow()) - 1) ||
+                (stumpA.getRow() == stumpB.getRow() && size == Math.abs(stumpA.getCol() - stumpB.getCol()) - 1)){
+            return placePlank(stumpA,stumpB);
+        } else {
+            System.out.print(size);
+            return -1;
+        }
+    }
+
+    /**
+     * Places a plank from a stump in a direction relative to it
+     *
+     * @param stump stump at one end of the plank
+     * @param direction direction towards other stump
+     * @return 1 if successful, -1 if unsuccessful
+     */
+    public int placePlank(GameTile stump, GameControl.Direction direction){
+        return placePlank(stump,getNextTile(stump,direction,GameTile.Content.STUMP));
+    }
+
+    /**
+     * Places a plank of a specified size from a stump in a direction relative to it
+     *
+     * @param stump stump at one end of the plank
+     * @param direction direction towards other stump
+     * @param size size of the plank
+     * @return 1 if successful, -1 if unsuccessful
+     */
+    public int placePlank(GameTile stump, GameControl.Direction direction, int size){
+        return placePlank(stump,getNextTile(stump,direction,GameTile.Content.STUMP),size);
+    }
+
+    /**
+     * Remove a plank, accessing it from a singe tile, part of the plank
+     *
      * @param plankTile tile part of the plank
+     * @return size of the plank removed
      */
     public int removePlank(GameTile plankTile){
-        if(plankTile.getContent() != Content.PLANK) {
+        if(plankTile.getContent() != GameTile.Content.PLANK) {
             return 0;
         }
 
         Plank plank = plankTile.getPlankPiece();
-        System.out.print(plank.size);
 
         for(int i = 0; i < plank.size; i++){
-            plank.span[i].setContent(Content.WATER);
+            plank.span[i].setContent(GameTile.Content.WATER);
         }
 
         plankList.remove(plank);
@@ -209,12 +348,14 @@ public class GameMap extends JLayeredPane {
     }
 
     /**
-     * Remove a plank, accessing it by the two stumps surrounding it
+     * Remove a plank, situated between two stumps
+     *
      * @param stumpA stump at one end of the plank
      * @param stumpB stump at other end of the plank
+     * @return size of the plank removed
      */
     public int removePlank(GameTile stumpA, GameTile stumpB){
-        if(stumpA.getContent() != Content.STUMP || stumpB.getContent() != Content.STUMP) {
+        if(stumpA.getContent() != GameTile.Content.STUMP || stumpB.getContent() != GameTile.Content.STUMP) {
             return 0;
         }
 
@@ -225,108 +366,50 @@ public class GameMap extends JLayeredPane {
     }
 
     /**
-     * Moves the player to a place in the gameGrid
-     * @param row grid row destination
-     * @param col grid column destination
+     * Remove a plank, situated in a direction relative to a stump
+     *
+     * @param stump stump at one end of the plank
+     * @param direction direction of the plank, relative to the stump
+     * @return size of the plank removed
      */
-    public void movePlayerTo(int row, int col){
-        if(gameGrid[row][col].getContent() != Content.STUMP && gameGrid[row][col].getContent() != Content.PLANK ) {
+    public int removePlank(GameTile stump, GameControl.Direction direction){
+        return removePlank(getNextTile(stump,direction));
+    }
+
+    /**
+     * Moves the player to a tile in the gameGrid
+     *
+     * @param tile tile of the gameGrid
+     */
+    public void movePlayerTo(GameTile tile){
+        if(tile.getContent() != GameTile.Content.STUMP && tile.getContent() != GameTile.Content.PLANK ) {
             return;
         }
-        player.setLocationInGrid(row,col);
+        player.setTile(tile);
     }
 
-    public void movePlayerTo(GameTile tile){
-        movePlayerTo(tile.getRow(),tile.getCol());
-    }
-
-    public GameTile getNextTile(GameTile tile, GameControl.Direction dir){
-        if(dir == GameControl.Direction.LEFT) {
-            return gameGrid[tile.getRow()][tile.getCol()-1];
-        } else if(dir == GameControl.Direction.RIGHT){
-            return gameGrid[tile.getRow()][tile.getCol()+1];
-        } else if(dir == GameControl.Direction.UP){
-            return gameGrid[tile.getRow()-1][tile.getCol()];
-        } else if(dir == GameControl.Direction.DOWN){
-            return gameGrid[tile.getRow()+1][tile.getCol()];
-        }
-        return null;
-    }
-
-    public GameTile getNextTile(GameControl.Direction dir){
-        return getNextTile(player.getTile(),dir);
-    }
-
-    public Content getTileContent(int row, int col){
-        if(row >= 0 && row < 13 && col >= 0 && col < 9)
-            return gameGrid[row][col].getContent();
-        else
-            return null;
-    }
-
-    public Content getTileContent(GameTile tile){
-        return getTileContent(tile.getRow(),tile.getCol());
-    }
-
-    class Player extends JLabel{
-        private int row;
-        private int col;
-        private GameControl.Direction direction;
-        public int plankHeldSize = 0;
-
-        public void setLocationInGrid(int row, int col){
-            this.col = col;
-            this.row = row;
-            setLocation(col * TILE_SIZE,row * TILE_SIZE);
-        }
-
-        public void setLocationInGrid(GameTile tile){
-            setLocationInGrid(tile.getRow(),tile.getCol());
-        }
-
-        public GameTile getTile(){
-            return gameGrid[row][col];
-        }
-
-        public int getCol() {
-            return col;
-        }
-
-        public void setCol(int col) {
-            this.col = col;
-            setLocation(col * TILE_SIZE,row * TILE_SIZE);
-        }
-
-        public int getRow() {
-            return row;
-        }
-        
-        public void setRow(int row) {
-            this.row = row;
-            setLocation(col * TILE_SIZE,row * TILE_SIZE);
-        }
-
-        public GameControl.Direction getDirection() {
-            return direction;
-        }
-
-        public void setDirection(GameControl.Direction direction) {
-            this.direction = direction;
-            setIcon(playerIcon[direction.ordinal()]);
-        }
-    }
-
+    /**
+     * Inner class, representing a Plank object.
+     * Consist of an image, orientation of the plank, size of the plank, and span of the plank.
+     * Extends JButton with no border.
+     */
     class Plank extends JButton{
-        private int size;
+        private int size; // size span of the plank - number of GameTiles it spans
         private int orientation; // 0 for picked up, positive for horizontal and negative for vertical
-        private GameTile[] span = new GameTile[3]; // GameTiles the plank spans over
+        private GameTile[] span = new GameTile[5]; // GameTiles the plank spans over
 
+        /**
+         * Constructor. Creates a JButton with no border
+         * @param size plank size
+         * @param orientation plank orientation
+         */
         private Plank(int size, int orientation) {
             setBorder(BorderFactory.createEmptyBorder());
             setContentAreaFilled(false);
 
             this.size = size;
             this.orientation = orientation;
+
             if (orientation < 0) {
                 setIcon(vPlankIcon);
             } else if (orientation > 0) {
@@ -334,14 +417,41 @@ public class GameMap extends JLayeredPane {
             }
         }
 
+        /**
+         * Constructor. Creates a placeholder plank with no size or orientation.
+         */
         private Plank(){
             this(0,0);
         }
 
-        private void setSize(int size) {
+        /**
+         * Get the span size of the plank
+         * @return number of GameTiles the plank spans across
+         */
+        public int getSpanSize() {
+            return size;
+        }
+
+        /**
+         * Set the span size of the plank
+         * @param size number of GameTiles the plank spans across
+         */
+        private void setSpanSize(int size) {
             this.size = size;
         }
 
+        /**
+         * Get the orientation of the plank
+         * @return negative for vertical, positive for horizontal
+         */
+        public int getOrientation() {
+            return orientation;
+        }
+
+        /**
+         * Set the orientation of the plank and it's image
+         * @param orientation negative for vertical, positive for horizontal
+         */
         private void setOrientation(int orientation) {
             this.orientation = orientation;
             if (orientation < 0) {
@@ -352,13 +462,7 @@ public class GameMap extends JLayeredPane {
         }
     }
 
-    public final ImageIcon playerIcon[] = {
-            new ImageIcon(getClass().getResource("manL.png")),
-            new ImageIcon(getClass().getResource("manR.png")),
-            new ImageIcon(getClass().getResource("manU.png")),
-            new ImageIcon(getClass().getResource("manD.png"))
-    };
 
-    public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.gif")); // horizontal plank
-    public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.gif")); // vertical plank
+    public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.png")); // horizontal plank
+    public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.png")); // vertical plank
 }

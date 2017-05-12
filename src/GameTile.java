@@ -5,18 +5,23 @@ import java.util.Random;
  * This class contains and controls a single tile of the game grid.
  */
 public class GameTile extends JButton {
-    private GameMap.Content content; // type of content the tile holds
+    private Content content; // type of content the tile holds
     private int row;
     private int col;
     private GameMap.Plank plankPiece = null; // index of the plank placed on this field, -1 if no plank
 
+    // Types of content the gameGrid can contain
+    public enum Content{
+        LAND, WATER, STUMP, PLANK
+    }
+    
     /**
      * Constructor. Creates the GameTile with set coordinates and content.
      * @param content type of content the tile holds
      * @param row row position of the tile
      * @param col column position of the tile
      */
-    public GameTile(GameMap.Content content, int row, int col) {
+    public GameTile(Content content, int row, int col) {
         setBorder(BorderFactory.createEmptyBorder());
 
         this.content = content;
@@ -36,10 +41,66 @@ public class GameTile extends JButton {
     }
 
     /**
-     * Sets the content of the tile.
+     * Get the index of the plank contained.
+     * @return plankPiece the plank present in the tile
+     */
+    public GameMap.Plank getPlankPiece() {
+        return plankPiece;
+    }
+
+    /**
+     * Set the index of the plank held by this tile.
+     * @param plank plank present in the tile
+     */
+    public void setPlankPiece(GameMap.Plank plank) {
+        this.plankPiece = plank;
+    }
+
+    /**
+     * Get the row position of the tile
+     * @return row position of the tile
+     */
+    public int getRow() {
+        return row;
+    }
+
+    /**
+     * Set the row positon of the tile
+     * @param row row position of the tile
+     */
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    /**
+     * Get the column position of the tile
+     * @return column position of the tile
+     */
+    public int getCol() {
+        return col;
+    }
+
+    /**
+     * Set the column positon of the tile
+     * @param col column position of the tile
+     */
+    public void setCol(int col) {
+        this.col = col;
+    }
+
+    /**
+     * Get the current type of content of the tile
+     * @return content of the tile
+     */
+    public Content getContent() {
+        return content;
+    }
+
+    /**
+     * Sets the content of the tile and loads its image.
      * @param content new tile content type
      */
-    public void setContent(GameMap.Content content) {
+    public void setContent(Content content) {
         switch (content) {
             case LAND:
                 if (row < 1)
@@ -48,7 +109,8 @@ public class GameTile extends JButton {
                     setIcon(bankUpIcon);
                 break;
             case WATER:
-                if(this.content != GameMap.Content.PLANK) {
+                // allow the conent to change between plank and water without changing the image
+                if(this.content != Content.PLANK) {
                     Random rand = new Random();
                     int randW = rand.nextInt(40);
                     if(randW > 3) randW = 0;
@@ -64,65 +126,8 @@ public class GameTile extends JButton {
                 else
                     setIcon(stumpIcon);
                 break;
-            case PLANK:
-                if(this.content != GameMap.Content.WATER) {
-                    Random rand = new Random();
-                    int randW = rand.nextInt(40);
-                    if(randW > 3) randW = 0;
-                    setIcon(waterIcon[randW]);
-                }
-                break;
         }
-
         this.content = content;
-    }
-
-    /**
-     * Get the index of the plank contained. Return -1 if no plank contained.
-     * @return plankPiece index of the plank in the plankList
-     */
-    public GameMap.Plank getPlankPiece() {
-        return plankPiece;
-    }
-
-    /**
-     * Set the index of the plank held by this tile. Set to -1 if no plank to be contained.
-     * @param plank index of the plank in the plankList
-     */
-    public void setPlankPiece(GameMap.Plank plank) {
-        this.plankPiece = plank;
-    }
-
-    /**
-     * Get the row position of the tile
-     * @return row position of the tile
-     */
-    public int getRow() {
-        return row;
-    }
-
-    public void setRow(int row) {
-        this.row = row;
-    }
-
-    /**
-     * Get the column position of the tile
-     * @return column position of the tile
-     */
-    public int getCol() {
-        return col;
-    }
-
-    public void setCol(int col) {
-        this.col = col;
-    }
-
-    /**
-     * Get the current type of content of the tile
-     * @return content of the tile
-     */
-    public GameMap.Content getContent() {
-        return content;
     }
 
     // Code for loading the resources for the rest of the class
