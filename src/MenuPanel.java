@@ -59,7 +59,7 @@ public class MenuPanel extends javax.swing.JPanel {
             levelButton[i] = new JButton(Integer.toString(i + 1));
             buttonPanel.add(levelButton[i]);
             levelButton[i].addActionListener(levelListener);
-            if(i != 0 && i != 4 && i != 19 && i != 39 )
+            if(i != 0 && i != 4 && i!= 8 && i != 13 && i != 19 && i != 39 )
                 levelButton[i].setEnabled(false);
         }
         add(buttonPanel);

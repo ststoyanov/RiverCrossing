@@ -91,8 +91,13 @@ public class GameControl {
         if(direction != player.getDirection()){
             player.setDirection(direction);
         } else if(gameMap.getNextTile(player.getTile(),direction) != null){
-            if(gameMap.getNextTile(player.getTile(),direction).getContent() == GameTile.Content.PLANK)
-                gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(),direction, GameTile.Content.STUMP));
+            if(gameMap.getNextTile(player.getTile(),direction).getContent() == GameTile.Content.PLANK) {
+                gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(), direction, GameTile.Content.STUMP));
+                if(player.getTile() == gameMap.getWinTile()){
+                    gameMap.winMessage();
+                    gameMap.getActionMap().clear();
+                }
+            }
         }
     }
 
