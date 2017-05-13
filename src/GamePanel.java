@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -7,7 +8,6 @@ import java.awt.event.ActionListener;
  */
 public class GamePanel extends javax.swing.JPanel {
     private JPanel parent;
-    private JButton menuButton;
     private GameMap gameMap = new GameMap();
 
     /**
@@ -35,11 +35,21 @@ public class GamePanel extends javax.swing.JPanel {
      * Create the GamePanel
      */
     private void createGamePanel() {
-        add(gameMap);
+        setLayout(new BorderLayout());
+        add(gameMap,BorderLayout.CENTER);
         new GameControl(gameMap);
-        menuButton = new JButton("Menu");
+        JButton menuButton = new JButton("Menu");
+        JButton ghostPlankButton = new JButton("Hide \"ghost\" plank.");
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.PAGE_AXIS));
+
+        add(buttonPanel, BorderLayout.SOUTH);
+        buttonPanel.add(menuButton);
+        buttonPanel.add(ghostPlankButton);
+
         menuButton.setFocusable(false);
-        add(menuButton);
+        ghostPlankButton.setFocusable(false);
+
         menuButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -47,6 +57,20 @@ public class GamePanel extends javax.swing.JPanel {
                 parent.add(new MenuPanel(parent));
                 parent.revalidate();
                 parent.repaint();
+            }
+        });
+
+        ghostPlankButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(ghostPlankButton.getText().equals("Hide \"ghost\" plank.")) {
+                    gameMap.hideGhostPlank();
+                    ghostPlankButton.setText("Show \"ghost\" plank.");
+                }
+                else {
+                    gameMap.showGhostPlank();
+                    ghostPlankButton.setText("Hide \"ghost\" plank.");
+                }
             }
         });
     }

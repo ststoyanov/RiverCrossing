@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 
 /**
@@ -20,6 +19,7 @@ public class GameMap extends JLayeredPane {
     private JPanel mapPanel, plankPanel;
     public Player player;
     private ArrayList<Plank> plankList = new ArrayList<>();
+    private JLabel ghostPlank;
 
     // The gameGrid held as a double array of GameTiles
     private GameTile[][] gameGrid = new GameTile[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS];
@@ -53,6 +53,9 @@ public class GameMap extends JLayeredPane {
         plankPanel.setBounds(0,0,NUMBER_OF_COLUMNS * TILE_SIZE,NUMBER_OF_ROWS * TILE_SIZE);
         plankPanel.setOpaque(false);
         add(plankPanel, new Integer(10));
+
+        ghostPlank = new JLabel();
+        add(ghostPlank, new Integer(11));
 
         // playerPanel - shows the player
         player = new Player();
@@ -224,12 +227,18 @@ public class GameMap extends JLayeredPane {
      * @return 1 if successful, -1 if unsuccessful
      */
     public int placePlank(GameTile stumpA, GameTile stumpB, int size){
-        if((stumpA.getCol() == stumpA.getCol() && size == Math.abs(stumpA.getRow() - stumpB.getRow()) - 1) ||
-                (stumpA.getRow() == stumpB.getRow() && size == Math.abs(stumpA.getCol() - stumpB.getCol()) - 1)){
+        if(canPlacePlank(stumpA,stumpB,size)){
             return placePlank(stumpA,stumpB);
         } else {
             return -1;
         }
+    }
+
+    private boolean canPlacePlank(GameTile stumpA, GameTile stumpB, int size) {
+        if ((stumpA.getCol() == stumpA.getCol() && size == Math.abs(stumpA.getRow() - stumpB.getRow()) - 1) ||
+                (stumpA.getRow() == stumpB.getRow() && size == Math.abs(stumpA.getCol() - stumpB.getCol()) - 1)) {
+            return true;
+        } else return false;
     }
 
     /**
@@ -308,6 +317,69 @@ public class GameMap extends JLayeredPane {
      */
     public int removePlank(GameTile stump, GameControl.Direction direction){
         return removePlank(getNextTile(stump,direction));
+    }
+
+
+    /**
+     * Updates the position of the "ghost" plank.
+     */
+    public void updateGhostPlank(){
+        if(player.getPlankHeldSize() > 0) {
+            GameControl.Direction direction = player.getDirection();
+            int size = player.getPlankHeldSize();
+            int orientation = 0;
+
+            if (direction == GameControl.Direction.LEFT) {
+                ghostPlank.setBounds(player.getX() - size * TILE_SIZE, player.getY(), size * TILE_SIZE, TILE_SIZE);
+                orientation = -1;
+            } else if (direction == GameControl.Direction.RIGHT) {
+                ghostPlank.setBounds(player.getX()  + TILE_SIZE, player.getY(), size * TILE_SIZE, TILE_SIZE);
+                orientation = -1;
+            } else if (direction == GameControl.Direction.UP) {
+                ghostPlank.setBounds(player.getX(), player.getY() - size * TILE_SIZE, TILE_SIZE, size * TILE_SIZE);
+                orientation = 1;
+            } else if (direction == GameControl.Direction.DOWN) {
+                ghostPlank.setBounds(player.getX(), player.getY() + TILE_SIZE, TILE_SIZE, size * TILE_SIZE);
+                orientation = 1;
+            }
+
+            boolean canPlacePlank = canPlacePlank(player.getTile(),getNextTile(player.getTile(),direction, GameTile.Content.STUMP),size);
+
+            if(orientation > 0) {
+                if (canPlacePlank) {
+                    ghostPlank.setIcon(hGhostPlankIcon[1]);
+                } else {
+                    ghostPlank.setIcon(hGhostPlankIcon[0]);
+                }
+            } else if(orientation < 0){
+                if (canPlacePlank) {
+                    ghostPlank.setIcon(vGhostPlankIcon[1]);
+                } else {
+                    ghostPlank.setIcon(vGhostPlankIcon[0]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Makes the "ghost" plank visible.
+     */
+    public void showGhostPlank(){
+        ghostPlank.setVisible(true);
+    }
+
+    /**
+     * Removes the "ghost" plank
+     */
+    public void removeGhostPlank(){
+        ghostPlank.setIcon(null);
+    }
+
+    /**
+     * Hides the "ghost" plank
+     */
+    public void hideGhostPlank(){
+        ghostPlank.setVisible(false);
     }
 
     /**
@@ -555,4 +627,15 @@ public class GameMap extends JLayeredPane {
 
     public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.png")); // horizontal plank
     public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.png")); // vertical plank
+
+
+    public final ImageIcon vGhostPlankIcon[] = {
+            new ImageIcon(getClass().getResource("ghostplank1f.png")),
+            new ImageIcon(getClass().getResource("ghostplank1t.png"))
+    };
+
+    public final ImageIcon hGhostPlankIcon[] = {
+            new ImageIcon(getClass().getResource("ghostplank2f.png")),
+            new ImageIcon(getClass().getResource("ghostplank2t.png"))
+    };
 }

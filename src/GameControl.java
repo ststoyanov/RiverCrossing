@@ -91,9 +91,11 @@ public class GameControl {
     private void movePlayer(Direction direction){
         if(direction != player.getDirection()){
             player.setDirection(direction);
+            gameMap.updateGhostPlank();
         } else if(gameMap.getNextTile(player.getTile(),direction) != null){
             if(gameMap.getNextTile(player.getTile(),direction).getContent() == GameTile.Content.PLANK) {
                 gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(), direction, GameTile.Content.STUMP));
+                gameMap.updateGhostPlank();
                 if(player.getTile() == gameMap.getWinTile()){
                     displayWinMessage();
                     gameMap.getActionMap().clear();
@@ -106,10 +108,12 @@ public class GameControl {
         if(player.getPlankHeldSize() > 0){
             if(gameMap.placePlank(player.getTile(),player.getDirection(),player.getPlankHeldSize()) > 0) {
                 player.setPlankHeldSize(0);
+                gameMap.removeGhostPlank();
             }
         } else if(gameMap.getNextTile(player.getTile(), player.getDirection()) != null){
             if (gameMap.getNextTile(player.getTile(), player.getDirection()).getContent() == GameTile.Content.PLANK) {
                 player.setPlankHeldSize(gameMap.removePlank(player.getTile(), player.getDirection()));
+                gameMap.updateGhostPlank();
             }
         }
     }
