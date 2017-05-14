@@ -40,7 +40,7 @@ public class MenuPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Load the available levels lift
+     * Load the available levels list and display it in the form of JButtons which load them
      */
     private void getLevels() {
         ActionListener levelListener = new ActionListener() {

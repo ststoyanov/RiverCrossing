@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-
 import java.util.ArrayList;
 
 /**
@@ -23,6 +22,7 @@ public class GameMap extends JLayeredPane {
 
     // The gameGrid held as a double array of GameTiles
     private GameTile[][] gameGrid = new GameTile[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS];
+
     // Coordinates of the tile you have to reach to win
     private int winRow, winCol;
 
@@ -54,6 +54,7 @@ public class GameMap extends JLayeredPane {
         plankPanel.setOpaque(false);
         add(plankPanel, new Integer(10));
 
+        //ghostPlank - shows the plank, the player is holding
         ghostPlank = new JLabel();
         add(ghostPlank, new Integer(11));
 
@@ -64,6 +65,10 @@ public class GameMap extends JLayeredPane {
         add(player, new Integer(20));
     }
 
+    /**
+     * Get the currently loaded level.
+     * @return the current level
+     */
     public int getCurrentLevel() {
         return currentLevel;
     }
@@ -121,10 +126,12 @@ public class GameMap extends JLayeredPane {
      * @return 1 if successful, -1 if unsuccessful
      */
     public int placePlank(GameTile stumpA, GameTile stumpB){
+        // unsuccessful if the content of the two tiles is not a stump
         if(stumpA.getContent() != GameTile.Content.STUMP || stumpB.getContent() != GameTile.Content.STUMP) {
             return -1;
         }
 
+        // unsuccessful if stumpB is not reachable by a plank from stumpA
         for(GameControl.Direction dir : GameControl.Direction.values()) {
             if (getNextTile(stumpA, dir, GameTile.Content.STUMP) == stumpB) {
                 GameTile tempTile = stumpA;
@@ -227,18 +234,29 @@ public class GameMap extends JLayeredPane {
      * @return 1 if successful, -1 if unsuccessful
      */
     public int placePlank(GameTile stumpA, GameTile stumpB, int size){
-        if(canPlacePlank(stumpA,stumpB,size)){
+        if(calculateDistanse(stumpA,stumpB) == size){
             return placePlank(stumpA,stumpB);
         } else {
             return -1;
         }
     }
 
-    private boolean canPlacePlank(GameTile stumpA, GameTile stumpB, int size) {
-        if ((stumpA.getCol() == stumpA.getCol() && size == Math.abs(stumpA.getRow() - stumpB.getRow()) - 1) ||
-                (stumpA.getRow() == stumpB.getRow() && size == Math.abs(stumpA.getCol() - stumpB.getCol()) - 1)) {
-            return true;
-        } else return false;
+    /**
+     * Calculates the distance between tileA and tile B
+     * @param tileA GameTile 1
+     * @param tileB GameTile 2
+     * @return distance between the 2 tiles
+     */
+    private int calculateDistanse(GameTile tileA, GameTile tileB) {
+        int dist = 0;
+
+        if (tileA.getCol() == tileB.getCol()){
+            dist = Math.abs(tileA.getRow() - tileB.getRow()) - 1;
+        } else if (tileA.getRow() == tileB.getRow()) {
+            dist = Math.abs(tileA.getCol() - tileB.getCol()) - 1;
+        }
+
+        return dist;
     }
 
     /**
@@ -321,14 +339,16 @@ public class GameMap extends JLayeredPane {
 
 
     /**
-     * Updates the position of the "ghost" plank.
+     * Updates the position of the "ghost" plank to be in front of the player
      */
     public void updateGhostPlank(){
+        // update the ghost plank only if the player is holding a plank
         if(player.getPlankHeldSize() > 0) {
             GameControl.Direction direction = player.getDirection();
             int size = player.getPlankHeldSize();
             int orientation = 0;
 
+            // set the orientation fo the ghost plank
             if (direction == GameControl.Direction.LEFT) {
                 ghostPlank.setBounds(player.getX() - size * TILE_SIZE, player.getY(), size * TILE_SIZE, TILE_SIZE);
                 orientation = -1;
@@ -343,8 +363,10 @@ public class GameMap extends JLayeredPane {
                 orientation = 1;
             }
 
-            boolean canPlacePlank = canPlacePlank(player.getTile(),getNextTile(player.getTile(),direction, GameTile.Content.STUMP),size);
+            // check if the plank can be placed in that direction
+            boolean canPlacePlank = calculateDistanse(player.getTile(),getNextTile(player.getTile(),direction, GameTile.Content.STUMP)) == size;
 
+            // display the ghost plank
             if(orientation > 0) {
                 if (canPlacePlank) {
                     ghostPlank.setIcon(hGhostPlankIcon[1]);
@@ -418,6 +440,12 @@ public class GameMap extends JLayeredPane {
      */
     public void loadLevel(int level) {
         currentLevel = level;
+
+        // clear the current level planks
+        plankPanel.removeAll();
+        plankList.clear();
+        player.setPlankHeldSize(0);
+
         switch(level){
             case 1:
                 for (int i = 0; i < 13; i++) {
@@ -625,6 +653,7 @@ public class GameMap extends JLayeredPane {
     }
 
 
+    // Load resources
     public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.png")); // horizontal plank
     public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.png")); // vertical plank
 

@@ -89,28 +89,40 @@ public class GameControl {
      * @param direction direction for player movement or face
      */
     private void movePlayer(Direction direction){
-        if(direction != player.getDirection()){
-            player.setDirection(direction);
-            gameMap.updateGhostPlank();
-        } else if(gameMap.getNextTile(player.getTile(),direction) != null){
-            if(gameMap.getNextTile(player.getTile(),direction).getContent() == GameTile.Content.PLANK) {
-                gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(), direction, GameTile.Content.STUMP));
+        // if the player has finsihed the level, don't do anything
+        if(player.getTile() != gameMap.getWinTile()) {
+            // if the player is not facing the direction pressed, change it
+            if (direction != player.getDirection()) {
+                player.setDirection(direction);
                 gameMap.updateGhostPlank();
-                if(player.getTile() == gameMap.getWinTile()){
-                    displayWinMessage();
-                    gameMap.getActionMap().clear();
+            }
+            // if the player is facing the direction pressed move him in that direction if possible
+            else if (gameMap.getNextTile(player.getTile(), direction) != null) {
+                if (gameMap.getNextTile(player.getTile(), direction).getContent() == GameTile.Content.PLANK) {
+                    gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(), direction, GameTile.Content.STUMP));
+                    gameMap.updateGhostPlank();
+                    // when the player reaches the end of the level display the Win message
+                    if (player.getTile() == gameMap.getWinTile()) {
+                        displayWinMessage();
+                    }
                 }
             }
         }
     }
 
+    /**
+     * Controls the interaction with the plank on pressing the space key.
+     */
     private void plankInteraction(){
+        // if the player is holding a plank, place it in front of him if possible
         if(player.getPlankHeldSize() > 0){
             if(gameMap.placePlank(player.getTile(),player.getDirection(),player.getPlankHeldSize()) > 0) {
                 player.setPlankHeldSize(0);
                 gameMap.removeGhostPlank();
             }
-        } else if(gameMap.getNextTile(player.getTile(), player.getDirection()) != null){
+        }
+        // if the player is not holding a plank and the tile in front of them holds one, pick it up
+        else if(gameMap.getNextTile(player.getTile(), player.getDirection()) != null){
             if (gameMap.getNextTile(player.getTile(), player.getDirection()).getContent() == GameTile.Content.PLANK) {
                 player.setPlankHeldSize(gameMap.removePlank(player.getTile(), player.getDirection()));
                 gameMap.updateGhostPlank();
@@ -118,7 +130,10 @@ public class GameControl {
         }
     }
 
-    public void displayWinMessage(){
+    /**
+     * Displays the Win message panel and controls, upon finishing a level
+     */
+    private void displayWinMessage(){
         JPanel winPanel = new JPanel();
         JPanel parent = (JPanel) gameMap.getParent();
 
@@ -143,12 +158,14 @@ public class GameControl {
             }
         });
 
-        restartButton.addActionListener((new ActionListener() {
+        restartButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameMap.remove(winPanel);
                 gameMap.loadLevel(gameMap.getCurrentLevel());
+                parent.revalidate();
+                parent.repaint();
             }
-        }));
+        });
     }
 }
