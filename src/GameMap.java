@@ -40,6 +40,7 @@ public class GameMap extends JLayeredPane {
         mapPanel = new JPanel(new GridLayout(NUMBER_OF_ROWS,NUMBER_OF_COLUMNS));
         mapPanel.setBounds(0,0,NUMBER_OF_COLUMNS * TILE_SIZE,NUMBER_OF_ROWS * TILE_SIZE);
         add(mapPanel, DEFAULT_LAYER);
+
         // Add each tile of the gameGrid to the mapPanel
         for(int i = 0; i < NUMBER_OF_ROWS; i++) {
             for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
@@ -107,7 +108,7 @@ public class GameMap extends JLayeredPane {
      */
     public GameTile getNextTile(GameTile tile, GameControl.Direction direction, GameTile.Content content){
         GameTile tempTile = tile;
-        do{
+        while (true){
             tempTile = getNextTile(tempTile,direction);
             if(tempTile == null)
                 return tile;
@@ -115,7 +116,53 @@ public class GameMap extends JLayeredPane {
             if(tempTile.getContent() == content)
                 return tempTile;
 
-        }while (true);
+        }
+    }
+
+    /**
+     * Calculates the distance between tileA and tile B
+     * @param tileA GameTile 1
+     * @param tileB GameTile 2
+     * @return distance between the 2 tiles
+     */
+    private int distanceBetween(GameTile tileA, GameTile tileB) {
+        int dist = 0;
+
+        if (tileA.getCol() == tileB.getCol()){
+            dist = Math.abs(tileA.getRow() - tileB.getRow()) - 1;
+        } else if (tileA.getRow() == tileB.getRow()) {
+            dist = Math.abs(tileA.getCol() - tileB.getCol()) - 1;
+        }
+
+        return dist;
+    }
+
+    /**
+     * Check if a plank can be placed between two stumps.
+     * @param stumpA stump at one end of the plank
+     * @param stumpB stump at other end of the plank
+     * @param size size of the plank
+     * @return true if possible to place a plank of that size between the two stumps, false otherwise
+     */
+    private boolean canPlacePlank(GameTile stumpA, GameTile stumpB, int size){
+        if(distanceBetween(stumpA,stumpB)!=size)
+            return false;
+
+        // find the direction of stumpB, relative to stumpA
+        // then check if there is a plank between them
+        for(GameControl.Direction dir : GameControl.Direction.values()) {
+            if (getNextTile(stumpA, dir, GameTile.Content.STUMP) == stumpB) {
+                GameTile tempTile = stumpA;
+                while (tempTile != stumpB){
+                    tempTile = getNextTile(tempTile,dir);
+                    if(tempTile.getContent() == GameTile.Content.PLANK)
+                        return false;
+                }
+                break; // break the for as the direction is already found
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -130,17 +177,9 @@ public class GameMap extends JLayeredPane {
         if(stumpA.getContent() != GameTile.Content.STUMP || stumpB.getContent() != GameTile.Content.STUMP) {
             return -1;
         }
-
-        // unsuccessful if stumpB is not reachable by a plank from stumpA
-        for(GameControl.Direction dir : GameControl.Direction.values()) {
-            if (getNextTile(stumpA, dir, GameTile.Content.STUMP) == stumpB) {
-                GameTile tempTile = stumpA;
-                while (tempTile != stumpB){
-                    tempTile = getNextTile(tempTile,dir);
-                    if(tempTile.getContent() == GameTile.Content.PLANK)
-                        return -1;
-                }
-            }
+        // unsuccessful if a plank can't be placed between stumpA and stumpB
+        if(!canPlacePlank(stumpA,stumpB,distanceBetween(stumpA,stumpB))){
+            return -1;
         }
 
         Plank plank = new Plank(); // temp plank object
@@ -234,29 +273,11 @@ public class GameMap extends JLayeredPane {
      * @return 1 if successful, -1 if unsuccessful
      */
     public int placePlank(GameTile stumpA, GameTile stumpB, int size){
-        if(calculateDistanse(stumpA,stumpB) == size){
+        if(distanceBetween(stumpA,stumpB) == size){
             return placePlank(stumpA,stumpB);
         } else {
             return -1;
         }
-    }
-
-    /**
-     * Calculates the distance between tileA and tile B
-     * @param tileA GameTile 1
-     * @param tileB GameTile 2
-     * @return distance between the 2 tiles
-     */
-    private int calculateDistanse(GameTile tileA, GameTile tileB) {
-        int dist = 0;
-
-        if (tileA.getCol() == tileB.getCol()){
-            dist = Math.abs(tileA.getRow() - tileB.getRow()) - 1;
-        } else if (tileA.getRow() == tileB.getRow()) {
-            dist = Math.abs(tileA.getCol() - tileB.getCol()) - 1;
-        }
-
-        return dist;
     }
 
     /**
@@ -338,6 +359,7 @@ public class GameMap extends JLayeredPane {
     }
 
 
+
     /**
      * Updates the position of the "ghost" plank to be in front of the player
      */
@@ -364,7 +386,7 @@ public class GameMap extends JLayeredPane {
             }
 
             // check if the plank can be placed in that direction
-            boolean canPlacePlank = calculateDistanse(player.getTile(),getNextTile(player.getTile(),direction, GameTile.Content.STUMP)) == size;
+            boolean canPlacePlank = canPlacePlank(player.getTile(),getNextTile(player.getTile(),direction, GameTile.Content.STUMP),size);
 
             // display the ghost plank
             if(orientation > 0) {
