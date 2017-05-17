@@ -89,22 +89,23 @@ public class GameControl {
      * @param direction direction for player movement or face
      */
     private void movePlayer(Direction direction){
-        // if the player has finsihed the level, don't do anything
-        if(player.getTile() != gameMap.getWinTile()) {
-            // if the player is not facing the direction pressed, change it
-            if (direction != player.getDirection()) {
-                player.setDirection(direction);
+        // if the player has finished the level, don't do anything
+        if(player.getTile() == gameMap.getWinTile())
+            return;
+
+        // if the player is not facing the direction pressed, change it
+        if (direction != player.getDirection()) {
+            player.setDirection(direction);
+            gameMap.updateGhostPlank();
+        }
+        // if the player is facing the direction pressed move him in that direction if possible
+        else if (gameMap.getNextTile(player.getTile(), direction) != null) {
+            if (gameMap.getNextTile(player.getTile(), direction).getContent() == GameTile.Content.PLANK) {
+                gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(), direction, GameTile.Content.STUMP));
                 gameMap.updateGhostPlank();
-            }
-            // if the player is facing the direction pressed move him in that direction if possible
-            else if (gameMap.getNextTile(player.getTile(), direction) != null) {
-                if (gameMap.getNextTile(player.getTile(), direction).getContent() == GameTile.Content.PLANK) {
-                    gameMap.movePlayerTo(gameMap.getNextTile(player.getTile(), direction, GameTile.Content.STUMP));
-                    gameMap.updateGhostPlank();
-                    // when the player reaches the end of the level display the Win message
-                    if (player.getTile() == gameMap.getWinTile()) {
-                        displayWinMessage();
-                    }
+                // when the player reaches the end of the level display the Win message
+                if (player.getTile() == gameMap.getWinTile()) {
+                    displayWinMessage();
                 }
             }
         }
@@ -139,7 +140,7 @@ public class GameControl {
 
         JButton menuButton = new JButton("Menu");
         JButton restartButton = new JButton("Restart Level");
-        winPanel.setBounds(gameMap.TILE_SIZE*gameMap.NUMBER_OF_COLUMNS/2 - 100,gameMap.TILE_SIZE*gameMap.NUMBER_OF_ROWS/2 + - 40,200,80);
+        winPanel.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2 - 100, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2 + - 40,200,80);
 
         winPanel.add(new JLabel("Congratulations, level " + gameMap.getCurrentLevel() + " completed!"));
         winPanel.add(menuButton);

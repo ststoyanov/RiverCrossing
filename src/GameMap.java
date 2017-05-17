@@ -487,6 +487,69 @@ public class GameMap extends JLayeredPane {
                 movePlayerTo(gameGrid[12][2]);
                 setWinTile(gameGrid[0][6]);
                 break;
+            case 2:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if ((j == 0 && (i == 12 || i == 10 || i == 8) ||
+                                j == 4 && (i == 8 || i == 6 || i == 4)) ||
+                                j == 8 && (i == 4 || i == 2 || i == 0)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][0], gameGrid[10][0]);
+                placePlank(gameGrid[8][0], gameGrid[8][4]);
+                placePlank(gameGrid[4][4] , gameGrid[4][8]);
+                movePlayerTo(gameGrid[12][0]);
+                setWinTile(gameGrid[0][8]);
+                break;
+            case 3:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 6) ||
+                                j == 2 && (i == 10 || i == 6) ||
+                                j == 4 && (i == 12 || i == 10) ||
+                                j == 6 && (i == 6 || i == 2 || i == 0) ||
+                                j == 8 && (i == 6)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][4], gameGrid[10][4]);
+                placePlank(gameGrid[10][2], gameGrid[6][2]);
+                movePlayerTo(gameGrid[12][4]);
+                setWinTile(gameGrid[0][6]);
+                break;
+            case 4:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 10 || i == 6) ||
+                                j == 2 && (i == 12 || i == 8) ||
+                                j == 4 && (i == 10 || i == 4) ||
+                                j == 6 && (i == 6 || i == 0) ||
+                                j == 8 && (i == 8 || i == 4)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][2], gameGrid[8][2]);
+                placePlank(gameGrid[8][2], gameGrid[8][8]);
+                placePlank(gameGrid[8][8] , gameGrid[4][8]);
+                movePlayerTo(gameGrid[12][2]);
+                setWinTile(gameGrid[0][6]);
+                break;
             case 5:
                 for (int i = 0; i < 13; i++) {
                     for (int j = 0; j < 9; j++) {
@@ -507,12 +570,77 @@ public class GameMap extends JLayeredPane {
                 movePlayerTo(gameGrid[12][4]);
                 setWinTile(gameGrid[0][4]);
                 break;
+            case 6:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 10 || i == 6 || i == 4) ||
+                                j == 2 && (i == 12 || i == 10) ||
+                                j == 4 && (i == 8 || i == 4) ||
+                                j == 6 && (i == 2 || i == 0) ||
+                                j == 8 && (i == 8 || i == 6 || i == 2)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][2], gameGrid[10][2]);
+                placePlank(gameGrid[10][0], gameGrid[6][0]);
+                placePlank(gameGrid[8][8] , gameGrid[6][8]);
+                movePlayerTo(gameGrid[12][2]);
+                setWinTile(gameGrid[0][6]);
+                break;
+            case 7:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 10 || i == 4) ||
+                                j == 2 && (i == 12 || i == 8) ||
+                                j == 6 && (i == 10 || i == 8 || i == 4 || i == 2 || i == 0) ||
+                                j == 8 && (i == 10)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][2], gameGrid[8][2]);
+                placePlank(gameGrid[4][0], gameGrid[4][6]);
+                placePlank(gameGrid[10][6] , gameGrid[10][8]);
+                movePlayerTo(gameGrid[12][2]);
+                setWinTile(gameGrid[0][6]);
+                break;
+            case 8:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 4) ||
+                                j == 2 && (i == 12 || i == 8 || i == 4) ||
+                                j == 6 && (i == 8 || i == 2 || i == 0) ||
+                                j == 8 && (i == 6 || i == 4)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][2], gameGrid[8][2]);
+                placePlank(gameGrid[8][2], gameGrid[8][6]);
+                placePlank(gameGrid[8][6] , gameGrid[2][6]);
+                placePlank(gameGrid[6][8], gameGrid[4][8]);
+                movePlayerTo(gameGrid[12][2]);
+                setWinTile(gameGrid[0][6]);
+                break;
             case 9:
                 for (int i = 0; i < 13; i++) {
                     for (int j = 0; j < 9; j++) {
-                        if ((j == 0 && (i == 10 || i == 6) ||
+                        if (j == 0 && (i == 10 || i == 6) ||
                                 j == 2 && (i == 2 || i == 0) ||
-                                j == 4 && (i == 12 || i == 8 || i == 6)) ||
+                                j == 4 && (i == 12 || i == 8 || i == 6) ||
                                 j == 6 && (i == 6 || i == 2) ||
                                 j == 8 && (i == 8 || i == 4)) {
                             gameGrid[i][j].setContent(GameTile.Content.STUMP);
@@ -528,6 +656,91 @@ public class GameMap extends JLayeredPane {
                 placePlank(gameGrid[8][8] , gameGrid[4][8]);
                 movePlayerTo(gameGrid[12][4]);
                 setWinTile(gameGrid[0][2]);
+                break;
+            case 10:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 10 || i == 6 || i == 2) ||
+                                j == 2 && (i == 10 || i == 2) ||
+                                j == 4 && (i == 12 || i == 10 || i == 6 || i == 2 || i == 0) ||
+                                j == 8 && (i == 6)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][4], gameGrid[10][4]);
+                placePlank(gameGrid[10][0], gameGrid[6][0]);
+                placePlank(gameGrid[6][4] , gameGrid[6][8]);
+                movePlayerTo(gameGrid[12][4]);
+                setWinTile(gameGrid[0][4]);
+                break;
+            case 11:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 10 || i == 6 || i == 4) ||
+                                j == 2 && (i == 6) ||
+                                j == 4 && (i == 10 || i == 4 || i == 0) ||
+                                j == 6 && (i == 12 || i == 10 || i == 6) ||
+                                j == 8 && (i == 6)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][6], gameGrid[10][6]);
+                placePlank(gameGrid[10][0], gameGrid[10][4]);
+                movePlayerTo(gameGrid[12][6]);
+                setWinTile(gameGrid[0][4]);
+                break;
+            case 12:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 12 || i == 10 || i == 8 || i == 2) ||
+                                j == 2 && (i == 8) ||
+                                j == 6 && (i == 10 || i == 4 || i == 2 || i == 0) ||
+                                j == 8 && (i == 10 || i == 8)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][0], gameGrid[10][0]);
+                placePlank(gameGrid[8][2], gameGrid[8][8]);
+                movePlayerTo(gameGrid[12][0]);
+                setWinTile(gameGrid[0][6]);
+                break;
+            case 13:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 4) ||
+                                j == 2 && (i == 12 || i == 8 || i == 2) ||
+                                j == 4 && (i == 4) ||
+                                j == 6 && (i == 8 || i == 4 || i == 0) ||
+                                j == 8 && (i == 4 || i == 2)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][2], gameGrid[8][2]);
+                placePlank(gameGrid[4][0], gameGrid[4][4]);
+                placePlank(gameGrid[4][6] , gameGrid[4][8]);
+                placePlank(gameGrid[2][2], gameGrid[2][8]);
+                movePlayerTo(gameGrid[12][2]);
+                setWinTile(gameGrid[0][6]);
                 break;
             case 14:
                 for (int i = 0; i < 13; i++) {
@@ -550,6 +763,116 @@ public class GameMap extends JLayeredPane {
                 placePlank(gameGrid[8][8] , gameGrid[6][8]);
                 movePlayerTo(gameGrid[12][2]);
                 setWinTile(gameGrid[0][6]);
+                break;
+            case 15:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 4 || i == 2) ||
+                                j == 2 && (i == 8 || i == 6 || i == 2) ||
+                                j == 4 && (i == 4 || i == 0) ||
+                                j == 6 && (i == 12 || i == 10 || i == 6) ||
+                                j == 8 && (i == 6)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][6], gameGrid[10][6]);
+                placePlank(gameGrid[10][6], gameGrid[6][6]);
+                placePlank(gameGrid[8][2] , gameGrid[6][2]);
+                movePlayerTo(gameGrid[12][6]);
+                setWinTile(gameGrid[0][4]);
+                break;
+            case 16:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 4 || i == 2) ||
+                                j == 2 && (i == 6 || i == 0) ||
+                                j == 4 && (i == 8 || i == 2) ||
+                                j == 6 && (i == 12 || i == 10 || i == 4 || i == 2) ||
+                                j == 8 && (i == 8 || i == 6)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][6], gameGrid[10][6]);
+                placePlank(gameGrid[10][6], gameGrid[4][6]);
+                placePlank(gameGrid[2][0] , gameGrid[2][4]);
+                movePlayerTo(gameGrid[12][6]);
+                setWinTile(gameGrid[0][2]);
+                break;
+            case 17:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 2 && (i == 12 || i == 6) ||
+                                j == 4 && (i == 10 || i == 6 || i == 4 || i == 2) ||
+                                j == 6 && (i == 6 || i == 0) ||
+                                j == 8 && (i == 10 || i == 4|| i == 2)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][2], gameGrid[6][2]);
+                placePlank(gameGrid[6][2], gameGrid[6][4]);
+                placePlank(gameGrid[4][4] , gameGrid[4][8]);
+                placePlank(gameGrid[2][4], gameGrid[2][8]);
+                movePlayerTo(gameGrid[12][2]);
+                setWinTile(gameGrid[0][6]);
+                break;
+            case 18:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 8 || i == 4) ||
+                                j == 2 && (i == 6) ||
+                                j == 4 && (i == 12 || i == 8 || i == 2 || i == 0) ||
+                                j == 6 && (i == 6 || i == 4) ||
+                                j == 8 && (i == 8 || i == 4)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][4], gameGrid[8][4]);
+                placePlank(gameGrid[6][2], gameGrid[6][6]);
+                placePlank(gameGrid[4][0] , gameGrid[4][6]);
+                placePlank(gameGrid[4][6], gameGrid[4][8]);
+                movePlayerTo(gameGrid[12][4]);
+                setWinTile(gameGrid[0][4]);
+                break;
+            case 19:
+                for (int i = 0; i < 13; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (j == 0 && (i == 10 || i == 6) ||
+                                j == 2 && (i == 10 || i == 4) ||
+                                j == 4 && (i == 12 || i == 10 || i == 6 || i == 0) ||
+                                j == 8 && (i == 10 || i == 4)) {
+                            gameGrid[i][j].setContent(GameTile.Content.STUMP);
+                        } else if (i == 0 || i == 12) {
+                            gameGrid[i][j].setContent(GameTile.Content.LAND);
+                        } else {
+                            gameGrid[i][j].setContent(GameTile.Content.WATER);
+                        }
+                    }
+                }
+                placePlank(gameGrid[12][4], gameGrid[10][4]);
+                placePlank(gameGrid[10][0], gameGrid[6][0]);
+                placePlank(gameGrid[10][8] , gameGrid[4][8]);
+                movePlayerTo(gameGrid[12][4]);
+                setWinTile(gameGrid[0][4]);
                 break;
             case 20:
                 for (int i = 0; i < 13; i++) {
