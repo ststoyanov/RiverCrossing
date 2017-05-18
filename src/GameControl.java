@@ -6,9 +6,12 @@ import java.awt.event.ActionListener;
  * Class controlling the user input and the logic of the game.
  */
 public class GameControl {
+    public static final int CLASSIC_MODE = 0;
+    public static final int SPEED_RUN = 1;
     private  GameMap gameMap;
     private Player player;
-
+    private int mode;
+    private int winLevel;
     public enum Direction{
         LEFT, RIGHT, UP, DOWN;
 
@@ -32,6 +35,12 @@ public class GameControl {
         this.gameMap = gameMap;
         this.player = gameMap.player;
         createInputControl();
+    }
+
+    public void loadLevel(int level, int mode){
+        this.mode = mode;
+        if(mode == CLASSIC_MODE) gameMap.loadLevel(level);
+        else if(mode == SPEED_RUN) startSpeedRun(level);
     }
 
     /**
@@ -105,7 +114,7 @@ public class GameControl {
                 gameMap.updateGhostPlank();
                 // when the player reaches the end of the level display the Win message
                 if (player.getTile() == gameMap.getWinTile()) {
-                    displayWinMessage();
+                    finishLevel();
                 }
             }
         }
@@ -131,6 +140,30 @@ public class GameControl {
         }
     }
 
+    private void finishLevel(){
+        if(mode == CLASSIC_MODE) displayWinMessage();
+        else if(mode == SPEED_RUN) speedRunProgress();
+    }
+
+    private void startSpeedRun(int level){
+        if(level == 0){
+            gameMap.loadLevel(1);
+            winLevel = 20;
+        }
+        else if(level == 1){
+            gameMap.loadLevel(21);
+            winLevel = 30;
+        }
+        else {
+            gameMap.loadLevel(31);
+            winLevel = 40;
+        }
+    }
+
+    private void speedRunProgress(){
+        if(gameMap.getCurrentLevel() == winLevel) displayWinMessage();
+        else gameMap.loadLevel(gameMap.getCurrentLevel()+1);
+    }
     /**
      * Displays the Win message panel and controls, upon finishing a level
      */
@@ -139,13 +172,14 @@ public class GameControl {
         JPanel parent = (JPanel) gameMap.getParent();
 
         JButton menuButton = new JButton("Menu");
-        JButton restartButton = new JButton("Restart Level");
+        JButton nextlvlButton = new JButton("Next Level");
         winPanel.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2 - 100, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2 + - 40,200,80);
 
         winPanel.add(new JLabel("Congratulations, level " + gameMap.getCurrentLevel() + " completed!"));
         winPanel.add(menuButton);
-        winPanel.add(restartButton);
-        menuButton.requestFocusInWindow();
+        winPanel.add(nextlvlButton);
+        nextlvlButton.setFocusable(true);
+        nextlvlButton.requestFocusInWindow();
 
         gameMap.add(winPanel,new Integer(100));
 
@@ -159,11 +193,11 @@ public class GameControl {
             }
         });
 
-        restartButton.addActionListener(new ActionListener() {
+        nextlvlButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 gameMap.remove(winPanel);
-                gameMap.loadLevel(gameMap.getCurrentLevel());
+                gameMap.loadLevel(gameMap.getCurrentLevel() + 1);
                 parent.revalidate();
                 parent.repaint();
             }

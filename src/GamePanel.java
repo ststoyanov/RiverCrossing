@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 public class GamePanel extends javax.swing.JPanel {
     private JPanel parent;
     private GameMap gameMap = new GameMap();
+    private GameControl gameControl = new GameControl(gameMap);
 
     /**
      * Constructor. Load the game from a specified lvl.
@@ -16,19 +17,10 @@ public class GamePanel extends javax.swing.JPanel {
      * @param parent parent panel of the GamePanel panel
      * @param level  starting level
      */
-    public GamePanel(JPanel parent, int level) {
+    public GamePanel(JPanel parent, int mode, int level) {
         this.parent = parent;
         createGamePanel();
-        loadGame(level);
-    }
-
-    /**
-     * Constructor. Start the game from lvl 1.
-     *
-     * @param parent parent panel of the GamePanel panel
-     */
-    public GamePanel(JPanel parent) {
-        this(parent, 1);
+        gameControl.loadLevel(level,mode);
     }
 
     /**
@@ -37,7 +29,6 @@ public class GamePanel extends javax.swing.JPanel {
     private void createGamePanel() {
         setLayout(new BorderLayout());
         add(gameMap,BorderLayout.CENTER);
-        new GameControl(gameMap);
         JButton menuButton = new JButton("Menu");
         JButton ghostPlankButton = new JButton("Hide \"ghost\" plank.");
         JPanel buttonPanel = new JPanel();
@@ -74,16 +65,4 @@ public class GamePanel extends javax.swing.JPanel {
             }
         });
     }
-
-
-    /**
-     * Load the game at a lvl.
-     *
-     * @param level lvl to be loaded
-     */
-    private void loadGame(int level) {
-        gameMap.loadLevel(level);
-    }
-
-
 }
