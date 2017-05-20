@@ -11,7 +11,7 @@ import java.util.ArrayList;
  *  - player - shows the player
  */
 public class GameMap extends JLayeredPane {
-    public static final int TILE_SIZE = 32; // size of a singe game tile (square) in pixels
+    public static final int TILE_SIZE = 48; // size of a singe game tile (square) in pixels
     public static final int NUMBER_OF_ROWS = 13;
     public static final int NUMBER_OF_COLUMNS = 9;
 

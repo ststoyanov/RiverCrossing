@@ -148,14 +148,18 @@ public class GameControl {
     private void startSpeedRun(int level){
         if(level == 0){
             gameMap.loadLevel(1);
+            winLevel = 10;
+        } else if(level == 1){
+            gameMap.loadLevel(11);
             winLevel = 20;
-        }
-        else if(level == 1){
+        } else if(level == 2) {
             gameMap.loadLevel(21);
             winLevel = 30;
-        }
-        else {
+        } else if(level == 3) {
             gameMap.loadLevel(31);
+            winLevel = 40;
+        } else {
+            gameMap.loadLevel(1);
             winLevel = 40;
         }
     }
