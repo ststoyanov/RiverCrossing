@@ -9,6 +9,7 @@ public class GameControl {
     public static final int CLASSIC_MODE = 0;
     public static final int SPEED_RUN = 1;
     private  GameMap gameMap;
+    private GamePanel parent;
     private Player player;
     private int mode;
     private int winLevel;
@@ -31,7 +32,8 @@ public class GameControl {
      * Constructor. Creates a game control for a GameMap
      * @param gameMap gameMap to be played in
      */
-    public GameControl(GameMap gameMap){
+    public GameControl(GamePanel parent, GameMap gameMap){
+        this.parent = parent;
         this.gameMap = gameMap;
         this.player = gameMap.player;
         createInputControl();
@@ -142,7 +144,13 @@ public class GameControl {
 
     private void finishLevel(){
         if(mode == CLASSIC_MODE) displayWinMessage();
-        else if(mode == SPEED_RUN) speedRunProgress();
+        else if(mode == SPEED_RUN) {
+            if(gameMap.getCurrentLevel() == winLevel){
+                parent.stopTimer();
+                displayWinMessage();
+            }
+            else gameMap.loadLevel(gameMap.getCurrentLevel()+1);
+        }
     }
 
     private void startSpeedRun(int level){
@@ -164,10 +172,6 @@ public class GameControl {
         }
     }
 
-    private void speedRunProgress(){
-        if(gameMap.getCurrentLevel() == winLevel) displayWinMessage();
-        else gameMap.loadLevel(gameMap.getCurrentLevel()+1);
-    }
     /**
      * Displays the Win message panel and controls, upon finishing a level
      */

@@ -9,11 +9,10 @@ import java.awt.event.ActionListener;
 public class GamePanel extends javax.swing.JPanel {
     private JPanel parent;
     private GameMap gameMap = new GameMap();
-    private GameControl gameControl = new GameControl(gameMap);
-    private JLabel timerLabel = new JLabel("00.00");
+    private GameControl gameControl = new GameControl(this, gameMap);
+    private JLabel timerLabel = new JLabel();
     private float time;
     Timer timer;
-    int seconds;
     long startTime;
     long elapsed;
 
@@ -28,24 +27,29 @@ public class GamePanel extends javax.swing.JPanel {
         createGamePanel();
         gameControl.loadLevel(level,mode);
         if(mode == GameControl.SPEED_RUN){
-            startTime=System.currentTimeMillis();
-            seconds = 1;
-            timer = new Timer(10, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    long now = System.currentTimeMillis();
-                    elapsed = now - startTime;
-                    seconds++;
-                    timerLabel.setText(String.format("%02d:%02d:%02d",elapsed/1000/60,elapsed/1000%60,elapsed%1000/10));
-                    timer.start();
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
-            add(timerLabel, BorderLayout.NORTH);
+            startTimer();
         }
     }
 
+    private void startTimer(){
+        startTime=System.currentTimeMillis();
+        timer = new Timer(10, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                long now = System.currentTimeMillis();
+                elapsed = now - startTime;
+                timerLabel.setText(String.format("%02d:%02d:%02d",elapsed/1000/60,elapsed/1000%60,elapsed%1000/10));
+                timer.start();
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
+        add(timerLabel, BorderLayout.NORTH);
+    }
+
+    public void stopTimer(){
+        timer.stop();
+    }
 
     /**
      * Create the GamePanel

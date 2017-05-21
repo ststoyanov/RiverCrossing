@@ -1354,7 +1354,7 @@ public class GameMap extends JLayeredPane {
      * Consist of an image, orientation of the plank, size of the plank, and span of the plank.
      * Extends JButton with no border.
      */
-    class Plank extends JButton{
+    class Plank extends JLabel{
         private int size; // size span of the plank - number of GameTiles it spans
         private int orientation; // 0 for picked up, positive for horizontal and negative for vertical
         private GameTile[] span = new GameTile[5]; // GameTiles the plank spans over
@@ -1365,8 +1365,6 @@ public class GameMap extends JLayeredPane {
          * @param orientation plank orientation
          */
         private Plank(int size, int orientation) {
-            setBorder(BorderFactory.createEmptyBorder());
-            setContentAreaFilled(false);
             setFocusable(false);
 
             this.size = size;
