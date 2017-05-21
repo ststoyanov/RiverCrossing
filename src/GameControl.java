@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,6 +14,9 @@ public class GameControl {
     private Player player;
     private int mode;
     private int winLevel;
+    private Timer timer;
+    private long startTime;
+    private long elapsed;
     public enum Direction{
         LEFT, RIGHT, UP, DOWN;
 
@@ -43,6 +47,21 @@ public class GameControl {
         this.mode = mode;
         if(mode == CLASSIC_MODE) gameMap.loadLevel(level);
         else if(mode == SPEED_RUN) startSpeedRun(level);
+    }
+
+    private void startTimer(){
+        startTime=System.currentTimeMillis();
+        timer = new Timer(10, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                long now = System.currentTimeMillis();
+                elapsed = now - startTime;
+                parent.updateTimer(String.format("%02d:%02d:%02d",elapsed/1000/60,elapsed/1000%60,elapsed%1000/10));
+                timer.start();
+            }
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 
     /**
@@ -146,7 +165,7 @@ public class GameControl {
         if(mode == CLASSIC_MODE) displayWinMessage();
         else if(mode == SPEED_RUN) {
             if(gameMap.getCurrentLevel() == winLevel){
-                parent.stopTimer();
+                timer.stop();
                 displayWinMessage();
             }
             else gameMap.loadLevel(gameMap.getCurrentLevel()+1);
@@ -156,7 +175,7 @@ public class GameControl {
     private void startSpeedRun(int level){
         if(level == 0){
             gameMap.loadLevel(1);
-            winLevel = 10;
+            winLevel = 3;
         } else if(level == 1){
             gameMap.loadLevel(11);
             winLevel = 20;
@@ -170,6 +189,8 @@ public class GameControl {
             gameMap.loadLevel(1);
             winLevel = 40;
         }
+
+        startTimer();
     }
 
     /**
