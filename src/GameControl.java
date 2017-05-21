@@ -13,6 +13,7 @@ public class GameControl {
     private GamePanel parent;
     private Player player;
     private int mode;
+    private int difficulty;
     private int winLevel;
     private Timer timer;
     private long startTime;
@@ -46,7 +47,10 @@ public class GameControl {
     public void loadLevel(int level, int mode){
         this.mode = mode;
         if(mode == CLASSIC_MODE) gameMap.loadLevel(level);
-        else if(mode == SPEED_RUN) startSpeedRun(level);
+        else if(mode == SPEED_RUN) {
+            difficulty = level;
+            startSpeedRun(level);
+        }
     }
 
     private void startTimer(){
@@ -162,11 +166,11 @@ public class GameControl {
     }
 
     private void finishLevel(){
-        if(mode == CLASSIC_MODE) displayWinMessage();
+        if(mode == CLASSIC_MODE) displayWinMessage(CLASSIC_MODE, gameMap.getCurrentLevel());
         else if(mode == SPEED_RUN) {
             if(gameMap.getCurrentLevel() == winLevel){
                 timer.stop();
-                displayWinMessage();
+                displayWinMessage(SPEED_RUN, difficulty);
             }
             else gameMap.loadLevel(gameMap.getCurrentLevel()+1);
         }
@@ -175,7 +179,7 @@ public class GameControl {
     private void startSpeedRun(int level){
         if(level == 0){
             gameMap.loadLevel(1);
-            winLevel = 3;
+            winLevel = 2;
         } else if(level == 1){
             gameMap.loadLevel(11);
             winLevel = 20;
@@ -196,15 +200,16 @@ public class GameControl {
     /**
      * Displays the Win message panel and controls, upon finishing a level
      */
-    private void displayWinMessage(){
+    private void displayWinMessage(int mode, int level){
         JPanel winPanel = new JPanel();
-        JPanel parent = (JPanel) gameMap.getParent();
+        JLabel winMsg = new JLabel();
 
         JButton menuButton = new JButton("Menu");
-        JButton nextlvlButton = new JButton("Next Level");
+        JButton nextlvlButton = new JButton();
         winPanel.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2 - 100, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2 + - 40,200,80);
 
-        winPanel.add(new JLabel("Congratulations, level " + gameMap.getCurrentLevel() + " completed!"));
+
+        winPanel.add(winMsg);
         winPanel.add(menuButton);
         winPanel.add(nextlvlButton);
         nextlvlButton.setFocusable(true);
@@ -222,14 +227,51 @@ public class GameControl {
             }
         });
 
-        nextlvlButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                gameMap.remove(winPanel);
-                gameMap.loadLevel(gameMap.getCurrentLevel() + 1);
-                parent.revalidate();
-                parent.repaint();
+        if(mode == CLASSIC_MODE) {
+            winMsg.setText("Congratulations level "+level+" completed!" );
+
+            nextlvlButton.setText("Next Level");
+            nextlvlButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    gameMap.remove(winPanel);
+                    gameMap.loadLevel(level + 1);
+                    parent.revalidate();
+                    parent.repaint();
+                }
+            });
+        } else if(mode == SPEED_RUN){
+            String levelText = "";
+
+            switch (level){
+                case 0:
+                    levelText = "Easy Run";
+                    break;
+                case 1:
+                    levelText = "Normal Run";
+                    break;
+                case 2:
+                    levelText = "Intermediate Run";
+                    break;
+                case 3:
+                    levelText = "Expert Run";
+                    break;
+                case 4:
+                    levelText = "ULTIMATE Run";
+                    break;
             }
-        });
+
+            winMsg.setText("<html>"+levelText+" completed in <br>"+String.format("%02d:%02d:%02d",elapsed/1000/60,elapsed/1000%60,elapsed%1000/10)+"!</html>" );
+            nextlvlButton.setText("Restart Run");
+            nextlvlButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    gameMap.remove(winPanel);
+                    loadLevel(level,SPEED_RUN);
+                    parent.revalidate();
+                    parent.repaint();
+                }
+            });
+        }
     }
 }
