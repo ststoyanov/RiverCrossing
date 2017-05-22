@@ -17,7 +17,7 @@ public class MainWindow {
         mainPanel.add(new MenuPanel(mainPanel));
 
         //finalize and show window
-        window.setSize(800, 800);
+        window.setSize(800, 700);
         window.setContentPane(mainPanel);
         window.setResizable(false);
         window.setVisible(true);
