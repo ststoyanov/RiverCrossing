@@ -12,6 +12,7 @@ public class Player extends JLabel {
 
     /**
      * Get tile the player is positioned in
+     *
      * @return tile of the player
      */
     public GameTile getTile() {
@@ -20,15 +21,17 @@ public class Player extends JLabel {
 
     /**
      * Move the player to a tile
+     *
      * @param tile tile destination
      */
-    public void setTile(GameTile tile){
+    public void setTile(GameTile tile) {
         this.tile = tile;
-        setLocation(tile.getCol() * GameMap.TILE_SIZE,tile.getRow() * GameMap.TILE_SIZE);
+        setLocation(tile.getCol() * GameMap.TILE_SIZE, tile.getRow() * GameMap.TILE_SIZE);
     }
 
     /**
      * Get direction the player is facing
+     *
      * @return direction the player is facing
      */
     public GameControl.Direction getDirection() {
@@ -37,6 +40,7 @@ public class Player extends JLabel {
 
     /**
      * Set direction for the player to face
+     *
      * @param direction direction for the player to face
      */
     public void setDirection(GameControl.Direction direction) {
@@ -46,6 +50,7 @@ public class Player extends JLabel {
 
     /**
      * Get the size of the plank the player is holding
+     *
      * @return size of the plank the player is holding
      */
     public int getPlankHeldSize() {
@@ -54,6 +59,7 @@ public class Player extends JLabel {
 
     /**
      * Set the size of the plank the player is holding
+     *
      * @param plankHeldSize size of the plank the player is holding
      */
     public void setPlankHeldSize(int plankHeldSize) {

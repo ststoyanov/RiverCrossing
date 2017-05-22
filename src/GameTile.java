@@ -11,15 +11,16 @@ public class GameTile extends JButton {
     private GameMap.Plank plankPiece = null; // index of the plank placed on this field, -1 if no plank
 
     // Types of content the gameGrid can contain
-    public enum Content{
+    public enum Content {
         LAND, WATER, STUMP, PLANK
     }
-    
+
     /**
      * Constructor. Creates the GameTile with set coordinates and content.
+     *
      * @param content type of content the tile holds
-     * @param row row position of the tile
-     * @param col column position of the tile
+     * @param row     row position of the tile
+     * @param col     column position of the tile
      */
     public GameTile(Content content, int row, int col) {
         setBorder(BorderFactory.createEmptyBorder());
@@ -28,21 +29,23 @@ public class GameTile extends JButton {
         this.content = content;
         this.row = row;
         this.col = col;
-        if(content != null)
+        if (content != null)
             setContent(content);
     }
 
     /**
      * Constructor. Creates the GameTile with set coordinates and no content.
+     *
      * @param row row position of the tile
      * @param col column position of the tile
      */
-    public GameTile(int row, int col){
-        this(null,row,col);
+    public GameTile(int row, int col) {
+        this(null, row, col);
     }
 
     /**
      * Get the index of the plank contained.
+     *
      * @return plankPiece the plank present in the tile
      */
     public GameMap.Plank getPlankPiece() {
@@ -51,6 +54,7 @@ public class GameTile extends JButton {
 
     /**
      * Set the index of the plank held by this tile.
+     *
      * @param plank plank present in the tile
      */
     public void setPlankPiece(GameMap.Plank plank) {
@@ -59,6 +63,7 @@ public class GameTile extends JButton {
 
     /**
      * Get the row position of the tile
+     *
      * @return row position of the tile
      */
     public int getRow() {
@@ -67,6 +72,7 @@ public class GameTile extends JButton {
 
     /**
      * Set the row positon of the tile
+     *
      * @param row row position of the tile
      */
     public void setRow(int row) {
@@ -75,6 +81,7 @@ public class GameTile extends JButton {
 
     /**
      * Get the column position of the tile
+     *
      * @return column position of the tile
      */
     public int getCol() {
@@ -83,6 +90,7 @@ public class GameTile extends JButton {
 
     /**
      * Set the column positon of the tile
+     *
      * @param col column position of the tile
      */
     public void setCol(int col) {
@@ -91,6 +99,7 @@ public class GameTile extends JButton {
 
     /**
      * Get the current type of content of the tile
+     *
      * @return content of the tile
      */
     public Content getContent() {
@@ -99,6 +108,7 @@ public class GameTile extends JButton {
 
     /**
      * Sets the content of the tile and loads its image.
+     *
      * @param content new tile content type
      */
     public void setContent(Content content) {
@@ -111,10 +121,10 @@ public class GameTile extends JButton {
                 break;
             case WATER:
                 // allow the conent to change between plank and water without changing the image
-                if(this.content != Content.PLANK) {
+                if (this.content != Content.PLANK) {
                     Random rand = new Random();
                     int randW = rand.nextInt(40);
-                    if(randW > 3) randW = 0;
+                    if (randW > 3) randW = 0;
                     setIcon(waterIcon[randW]);
                 }
                 break;

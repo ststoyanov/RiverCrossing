@@ -12,7 +12,7 @@ public class MenuPanel extends javax.swing.JPanel {
 
     private JPanel parent;
     private JButton[] menuButtons = new JButton[]{
-      new JButton("Play Classic"),
+            new JButton("Play Classic"),
             new JButton("Speed Run"),
             new JButton("How to play"),
             new JButton("Exit")
@@ -61,7 +61,7 @@ public class MenuPanel extends javax.swing.JPanel {
         menuButtons[3].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFrame frame = (JFrame)SwingUtilities.getRoot(parent);
+                JFrame frame = (JFrame) SwingUtilities.getRoot(parent);
                 frame.dispose();
             }
         });
@@ -77,7 +77,7 @@ public class MenuPanel extends javax.swing.JPanel {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     parent.removeAll();
-                    parent.add(new GamePanel(parent, GameControl.CLASSIC_MODE, Arrays.asList(levelButton).indexOf(e.getSource())+1));
+                    parent.add(new GamePanel(parent, GameControl.CLASSIC_MODE, Arrays.asList(levelButton).indexOf(e.getSource()) + 1));
                     parent.revalidate();
                     parent.repaint();
                 }
@@ -90,9 +90,9 @@ public class MenuPanel extends javax.swing.JPanel {
                 levelButton[i].addActionListener(levelListener);
                 levelButton[i].setFont(new Font("Wide Latin", Font.BOLD, 18));
                 levelButton[i].setForeground(Color.white);
-                if(i<10) levelButton[i].setBackground(Color.green);
-                else if(i<20) levelButton[i].setBackground(Color.orange);
-                else if(i<30) levelButton[i].setBackground(Color.blue);
+                if (i < 10) levelButton[i].setBackground(Color.green);
+                else if (i < 20) levelButton[i].setBackground(Color.orange);
+                else if (i < 30) levelButton[i].setBackground(Color.blue);
                 else levelButton[i].setBackground(Color.red);
             }
             add(buttonPanel);
@@ -117,7 +117,7 @@ public class MenuPanel extends javax.swing.JPanel {
             };
 
 
-            for(JButton diffButton : diffButtons){
+            for (JButton diffButton : diffButtons) {
                 add(diffButton);
                 diffButton.addActionListener(levelListener);
             }

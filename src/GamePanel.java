@@ -23,13 +23,13 @@ public class GamePanel extends JLayeredPane {
     public GamePanel(JPanel parent, int mode, int level) {
         this.parent = parent;
         createGamePanel();
-        gameControl.loadLevel(level,mode);
-        if(mode == GameControl.SPEED_RUN){
+        gameControl.loadLevel(level, mode);
+        if (mode == GameControl.SPEED_RUN) {
             mainPanel.add(timerLabel, BorderLayout.NORTH);
         }
     }
 
-    public void updateTimer(long elapsed){
+    public void updateTimer(long elapsed) {
         msTimer = elapsed;
         timerLabel.setText(String.format("%02d:%02d:%02d", elapsed / 1000 / 60, elapsed / 1000 % 60, elapsed % 1000 / 10));
     }
@@ -38,14 +38,14 @@ public class GamePanel extends JLayeredPane {
      * Create the GamePanel
      */
     private void createGamePanel() {
-        setPreferredSize(new Dimension(800,700));
+        setPreferredSize(new Dimension(800, 700));
 
         mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(gameMap,BorderLayout.CENTER);
+        mainPanel.add(gameMap, BorderLayout.CENTER);
         JButton menuButton = new JButton("Menu");
         JButton ghostPlankButton = new JButton("Hide \"ghost\" plank.");
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.PAGE_AXIS));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
 
         mainPanel.add(buttonPanel, BorderLayout.EAST);
         buttonPanel.add(menuButton);
@@ -67,18 +67,17 @@ public class GamePanel extends JLayeredPane {
         ghostPlankButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(ghostPlankButton.getText().equals("Hide \"ghost\" plank.")) {
+                if (ghostPlankButton.getText().equals("Hide \"ghost\" plank.")) {
                     gameMap.hideGhostPlank();
                     ghostPlankButton.setText("Show \"ghost\" plank.");
-                }
-                else {
+                } else {
                     gameMap.showGhostPlank();
                     ghostPlankButton.setText("Hide \"ghost\" plank.");
                 }
             }
         });
-        mainPanel.setBounds(100,0,600,700);
-        add(mainPanel,DEFAULT_LAYER);
+        mainPanel.setBounds(100, 0, 600, 700);
+        add(mainPanel, DEFAULT_LAYER);
 
 
     }
@@ -86,21 +85,21 @@ public class GamePanel extends JLayeredPane {
     /**
      * Displays the Win message panel and controls, upon finishing a level
      */
-    public void displayWinMessage(int mode, int level){
+    public void displayWinMessage(int mode, int level) {
         JPanel winPanel = new JPanel();
 
         JLabel winMsg = new JLabel();
 
         JButton menuButton = new JButton("Menu");
         JButton nextlvlButton = new JButton("Next Level");
-        winPanel.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2 + - 40,200,80);
+        winPanel.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS / 2, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS / 2 + -40, 200, 80);
 
         winPanel.add(winMsg);
         winPanel.add(menuButton);
         winPanel.add(nextlvlButton);
         nextlvlButton.setFocusable(true);
         nextlvlButton.requestFocusInWindow();
-        add(winPanel,new Integer(100));
+        add(winPanel, new Integer(100));
 
         menuButton.addActionListener(new ActionListener() {
             @Override
@@ -112,8 +111,8 @@ public class GamePanel extends JLayeredPane {
             }
         });
 
-        if(mode == GameControl.CLASSIC_MODE){
-            winMsg.setText("Congratulations level "+level+" completed!" );
+        if (mode == GameControl.CLASSIC_MODE) {
+            winMsg.setText("Congratulations level " + level + " completed!");
             nextlvlButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -123,10 +122,10 @@ public class GamePanel extends JLayeredPane {
                     repaint();
                 }
             });
-        } else if(mode == GameControl.SPEED_RUN){
+        } else if (mode == GameControl.SPEED_RUN) {
             String levelText = "";
 
-            switch (level){
+            switch (level) {
                 case 0:
                     levelText = "EasyRun";
                     break;
@@ -145,8 +144,8 @@ public class GamePanel extends JLayeredPane {
             }
 
             HighScoresPanel hsp = new HighScoresPanel(this, new HighScoresControl(levelText), msTimer);
-            hsp.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2  - 200,200,500);
-            add(hsp,new Integer(200));
+            hsp.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS / 2, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS / 2 - 200, 200, 500);
+            add(hsp, new Integer(200));
 
             nextlvlButton.setText("Restart Run");
             nextlvlButton.addActionListener(new ActionListener() {
@@ -154,7 +153,7 @@ public class GamePanel extends JLayeredPane {
                 public void actionPerformed(ActionEvent e) {
                     remove(winPanel);
                     remove(hsp);
-                    gameControl.loadLevel(level,GameControl.SPEED_RUN);
+                    gameControl.loadLevel(level, GameControl.SPEED_RUN);
                     revalidate();
                     repaint();
                 }
