@@ -12,7 +12,7 @@ public class GamePanel extends JLayeredPane {
     private GameMap gameMap = new GameMap();
     private GameControl gameControl = new GameControl(this, gameMap);
     private JLabel timerLabel = new JLabel();
-
+    private long msTimer = 0;
 
     /**
      * Constructor. Load the game from a specified lvl.
@@ -29,8 +29,9 @@ public class GamePanel extends JLayeredPane {
         }
     }
 
-    public void updateTimer(String elapsed){
-        timerLabel.setText(elapsed);
+    public void updateTimer(long elapsed){
+        msTimer = elapsed;
+        timerLabel.setText(String.format("%02d:%02d:%02d", elapsed / 1000 / 60, elapsed / 1000 % 60, elapsed % 1000 / 10));
     }
 
     /**
@@ -87,19 +88,18 @@ public class GamePanel extends JLayeredPane {
      */
     public void displayWinMessage(int mode, int level){
         JPanel winPanel = new JPanel();
+
         JLabel winMsg = new JLabel();
 
         JButton menuButton = new JButton("Menu");
-        JButton nextlvlButton = new JButton();
+        JButton nextlvlButton = new JButton("Next Level");
         winPanel.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2 + - 40,200,80);
-
 
         winPanel.add(winMsg);
         winPanel.add(menuButton);
         winPanel.add(nextlvlButton);
         nextlvlButton.setFocusable(true);
         nextlvlButton.requestFocusInWindow();
-
         add(winPanel,new Integer(100));
 
         menuButton.addActionListener(new ActionListener() {
@@ -112,10 +112,8 @@ public class GamePanel extends JLayeredPane {
             }
         });
 
-        if(mode == GameControl.CLASSIC_MODE) {
+        if(mode == GameControl.CLASSIC_MODE){
             winMsg.setText("Congratulations level "+level+" completed!" );
-
-            nextlvlButton.setText("Next Level");
             nextlvlButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -130,33 +128,38 @@ public class GamePanel extends JLayeredPane {
 
             switch (level){
                 case 0:
-                    levelText = "Easy Run";
+                    levelText = "EasyRun";
                     break;
                 case 1:
-                    levelText = "Normal Run";
+                    levelText = "NormalRun";
                     break;
                 case 2:
-                    levelText = "Intermediate Run";
+                    levelText = "IntermediateRun";
                     break;
                 case 3:
-                    levelText = "Expert Run";
+                    levelText = "ExpertRun";
                     break;
                 case 4:
-                    levelText = "ULTIMATE Run";
+                    levelText = "ULTIMATERun";
                     break;
             }
 
-          winMsg.setText("<html>"+levelText+" completed in <br>"+timerLabel.getText()+"!</html>" );
+            HighScoresPanel hsp = new HighScoresPanel(this, new HighScoresControl(levelText), msTimer);
+            hsp.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2  - 200,200,500);
+            add(hsp,new Integer(200));
+
             nextlvlButton.setText("Restart Run");
             nextlvlButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     remove(winPanel);
+                    remove(hsp);
                     gameControl.loadLevel(level,GameControl.SPEED_RUN);
                     revalidate();
                     repaint();
                 }
             });
+
         }
     }
 }

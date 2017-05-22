@@ -5,6 +5,7 @@ import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
@@ -14,10 +15,8 @@ import java.util.regex.Pattern;
 public class HighScoresPanel extends JPanel{
 	private JTextField newName;
 	private HighScoresControl scores;
+	private GamePanel parent;
 	private int scorePlace;
-	private long queuedScore = -1;
-	private boolean focus;
-	private boolean active = false;
 	
 	/**
 	 * Constructor. Creates a HighScoresPanel with the top 10 high scores stored 
@@ -25,8 +24,9 @@ public class HighScoresPanel extends JPanel{
 	 * @param scores list of the current top 10 high scores
 	 * @param newScore the new high score to be added
 	 */
-	public HighScoresPanel(String scores, long newScore){
-		this.scores = new HighScoresControl(scores);
+	public HighScoresPanel(GamePanel parent, HighScoresControl scores, long newScore){
+		this.scores = scores;
+		this.parent = parent;
 		createPanel(newScore);
 	}
 	
@@ -34,8 +34,8 @@ public class HighScoresPanel extends JPanel{
 	 * Constructor. Creates a HighScoresPanel with the top 10 high scores stored
 	 * @param scores list of the current top 10 high scores
 	 */
-	public HighScoresPanel(String scores){
-		this(scores,-1);
+	public HighScoresPanel(GamePanel parent, HighScoresControl scores){
+		this(parent,scores,-1);
 	}
 	
 	/**
@@ -67,16 +67,16 @@ public class HighScoresPanel extends JPanel{
 		}
 		
 		//if no new score, show the current top 10
-		if(newScore <= 0){
+		if(newScore >= scores.getLowScore() || newScore <= 0){
 			for(int i = 0;i < 10;i++){
 				namePanel.add(new JLabel(scores.getName(i)));
-				scorePanel.add(new JLabel("  "+Long.toString(scores.getScore(i))));
+				long tempScore = scores.getScore(i);
+				scorePanel.add(new JLabel("  "+String.format("%02d:%02d:%02d", tempScore / 1000 / 60, tempScore / 1000 % 60, tempScore % 1000 / 10)));
 			}
 		}
 		
 		//if there is a new score add it and let the user add his name to it
 		else{
-			queuedScore = newScore;
 			JPanel newNamePanel = new JPanel();
 			newNamePanel.setLayout(new BoxLayout(newNamePanel,BoxLayout.LINE_AXIS));
 			newName = new JTextField(9);
@@ -85,7 +85,7 @@ public class HighScoresPanel extends JPanel{
 			
 			//add the score at it's place and rearrange the rest of the scores
 			for(int i=0;i<10;i++){
-				if(newScore > scores.getScore(i)){
+				if(newScore < scores.getScore(i)){
 					scorePlace = i;
 					for(int j = 9;j>i;j--){
 						scores.setHighScore(j,scores.getName(j-1),scores.getScore(j-1));
@@ -97,19 +97,21 @@ public class HighScoresPanel extends JPanel{
 			//display the scores before the new one
 			for(int i = 0;i < scorePlace;i++){
 				namePanel.add(new JLabel(scores.getName(i)));
-				scorePanel.add(new JLabel("  "+Long.toString(scores.getScore(i))));
+				long tempScore = scores.getScore(i);
+				scorePanel.add(new JLabel("  "+String.format("%02d:%02d:%02d", tempScore / 1000 / 60, tempScore / 1000 % 60, tempScore % 1000 / 10)));
 			}
 			
 			//display the new score with a space to assign a name to it
 			newNamePanel.add(newName);
 			newNamePanel.setPreferredSize(new Dimension(100, 5));
 			namePanel.add(newNamePanel);
-			scorePanel.add(new JLabel("  "+Long.toString(newScore)));
+			scorePanel.add(new JLabel("  "+String.format("%02d:%02d:%02d", newScore / 1000 / 60, newScore / 1000 % 60, newScore % 1000 / 10)));
 			
 			//display the scores after the new one
 			for(int i = scorePlace+1;i<10;i++){
 				namePanel.add(new JLabel(scores.getName(i)));
-				scorePanel.add(new JLabel("  "+Long.toString(scores.getScore(i))));
+				long tempScore = scores.getScore(i);
+				scorePanel.add(new JLabel("  "+String.format("%02d:%02d:%02d", tempScore / 1000 / 60, tempScore / 1000 % 60, tempScore % 1000 / 10)));
 			}
 			
 			//when a name is typed and Enter is pressed finalize the field and save the score
@@ -118,11 +120,14 @@ public class HighScoresPanel extends JPanel{
 				public void actionPerformed(ActionEvent e){
 					if(!newName.getText().isEmpty()){
 						scores.setHighScore(scorePlace,newName.getText(),newScore);
-						queuedScore = -1;
-						newNamePanel.remove(newName);
-						newNamePanel.add(new JLabel(scores.getName(scorePlace)));
-						newNamePanel.revalidate();
-						newNamePanel.repaint();
+						try {
+							scores.save();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+						parent.remove(HighScoresPanel.this);
+                        parent.revalidate();
+                        parent.repaint();
 					}
 				}
 			});

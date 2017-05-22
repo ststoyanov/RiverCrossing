@@ -72,16 +72,16 @@ public class HighScoresControl {
 
 		//If the .highscores file is corrupted or missing fill up the top 10 with empty high scores
 		if (fileError) {
-			highScores[0] = new PersonalScore("John_Doe", 3000);
-			highScores[1] = new PersonalScore("John_Doe", 2500);
-			highScores[2] = new PersonalScore("John_Doe", 2200);
-			highScores[3] = new PersonalScore("John_Doe", 2000);
-			highScores[4] = new PersonalScore("John_Doe", 1800);
-			highScores[5] = new PersonalScore("John_Doe", 1500);
-			highScores[6] = new PersonalScore("John_Doe", 1250);
-			highScores[7] = new PersonalScore("John_Doe", 1100);
-			highScores[8] = new PersonalScore("John_Doe", 1000);
-			highScores[9] = new PersonalScore("John_Doe", 800);
+			highScores[0] = new PersonalScore("John_Doe", 600000);
+			highScores[1] = new PersonalScore("John_Doe", 600000);
+			highScores[2] = new PersonalScore("John_Doe", 600000);
+			highScores[3] = new PersonalScore("John_Doe", 600000);
+			highScores[4] = new PersonalScore("John_Doe", 600000);
+			highScores[5] = new PersonalScore("John_Doe", 600000);
+			highScores[6] = new PersonalScore("John_Doe", 600000);
+			highScores[7] = new PersonalScore("John_Doe", 600000);
+			highScores[8] = new PersonalScore("John_Doe", 600000);
+			highScores[9] = new PersonalScore("John_Doe", 600000);
 			throw (new IOException("Corrupted or missing .highscores file"));
 		}
 	}

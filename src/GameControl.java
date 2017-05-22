@@ -62,7 +62,7 @@ public class GameControl {
             public void actionPerformed(ActionEvent e) {
                 long now = System.currentTimeMillis();
                 elapsed = now - startTime;
-                parent.updateTimer(String.format("%02d:%02d:%02d", elapsed / 1000 / 60, elapsed / 1000 % 60, elapsed % 1000 / 10));
+                parent.updateTimer(elapsed);
                 timer.start();
             }
         });
@@ -174,9 +174,6 @@ public class GameControl {
             if (gameMap.getCurrentLevel() == winLevel) {
                 timer.stop();
                 parent.displayWinMessage(SPEED_RUN, difficulty);
-                HighScoresPanel hsp = new HighScoresPanel("scores",elapsed);
-                hsp.setBounds(GameMap.TILE_SIZE * GameMap.NUMBER_OF_COLUMNS /2, GameMap.TILE_SIZE * GameMap.NUMBER_OF_ROWS /2  - 200,200,500);
-                parent.add(hsp,new Integer(200));
             } else gameMap.loadLevel(gameMap.getCurrentLevel() + 1);
         }
     }
