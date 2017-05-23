@@ -70,6 +70,16 @@ public class MenuPanel extends JPanel {
             }
         });
 
+        menuButtons[2].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeAll();
+                loadHelpMenu();
+                revalidate();
+                repaint();
+            }
+        });
+
         menuButtons[3].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -82,7 +92,7 @@ public class MenuPanel extends JPanel {
     /**
      * Load the available levels list and display it in the form of JButtons which load them
      */
-    public void loadLevels(int mode) {
+    private void loadLevels(int mode) {
         // create the back button
         JButton backButton = new JGameButton("Back");
         backButton.addActionListener(new ActionListener() {
@@ -185,6 +195,28 @@ public class MenuPanel extends JPanel {
         }
     }
 
+    private void loadHelpMenu(){
+
+        // create the back button
+        JButton backButton = new JGameButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeAll();
+                loadMenu();
+                revalidate();
+                repaint();
+            }
+        });
+
+        JLabel helpLabel = new JLabel(helpBG);
+
+        add(Box.createHorizontalGlue());
+        add(helpLabel);
+        add(backButton);
+        add(Box.createHorizontalGlue());
+    }
+
     // load resources
     private final ImageIcon lvlIcon[] = {
             new ImageIcon(getClass().getResource("buttons/lvlbutton1.png")),
@@ -217,5 +249,8 @@ public class MenuPanel extends JPanel {
     };
 
     private final ImageIcon logo = new ImageIcon(getClass().getResource("logo.jpg"));
+
+    private final ImageIcon helpBG = new ImageIcon(getClass().getResource("help.jpg")); // help panel background
+
 }
 
