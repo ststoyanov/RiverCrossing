@@ -225,6 +225,9 @@ public class GamePanel extends JLayeredPane {
             }
 
             winMsg.setText(levelText + " completed in " + timerLabel.getText() + "!");
+            JLabel hsText = new JLabel("High Scores:");
+            hsText.setAlignmentX(Component.CENTER_ALIGNMENT);
+            winPanel.add(hsText);
 
             HighScoresPanel hsp = new HighScoresPanel(this, new HighScoresControl(levelText), msTimer);
             add(hsp, new Integer(200));
