@@ -1,9 +1,13 @@
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created the main window of the River Crossing game
  */
 public class MainWindow {
+    public static final int WINDOW_WIDTH = 900;
+    public static final int WINDOW_HEIGHT = 650;
+
     private JFrame window;
     private JPanel mainPanel;
 
@@ -13,11 +17,18 @@ public class MainWindow {
     public MainWindow() {
         window = new JFrame("River Crossing: The Perilous Plank Puzzle");
 
-        mainPanel = new JPanel();
-        mainPanel.add(new MenuPanel(mainPanel));
+        mainPanel = new JPanel(new BorderLayout()){
+            @Override
+            protected void paintComponent(Graphics g){
+                super.paintComponent(g);
+                g.drawImage(bgIMG, 0, 0, null);
+            }
+        };
+        mainPanel.add(new MenuPanel(mainPanel),BorderLayout.CENTER);
 
         //finalize and show window
-        window.setSize(800, 700);
+        window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        window.setLocationRelativeTo(null);
         window.setContentPane(mainPanel);
         window.setResizable(false);
         window.setVisible(true);
@@ -27,4 +38,6 @@ public class MainWindow {
     public static void main(String[] args) {
         new MainWindow();
     }
+
+    private final Image bgIMG = new ImageIcon(getClass().getResource("Background.jpg")).getImage(); // background
 }

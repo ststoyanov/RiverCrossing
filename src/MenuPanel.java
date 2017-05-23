@@ -7,15 +7,15 @@ import java.util.Arrays;
 /**
  * Creates the Menu Panel of the game.
  */
-public class MenuPanel extends javax.swing.JPanel {
-
-
+public class MenuPanel extends JPanel {
     private JPanel parent;
-    private JButton[] menuButtons = new JButton[]{
-            new JButton("Play Classic"),
-            new JButton("Speed Run"),
-            new JButton("How to play"),
-            new JButton("Exit")
+    private JPanel buttonPanel;
+
+    private JButton[] menuButtons = new JGameButton[]{
+            new JGameButton("Play Classic"),
+            new JGameButton("Speed Run"),
+            new JGameButton("How to play"),
+            new JGameButton("Exit")
     };
 
     /**
@@ -25,8 +25,8 @@ public class MenuPanel extends javax.swing.JPanel {
      */
     public MenuPanel(JPanel parent) {
         this.parent = parent;
-        setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-
+        setOpaque(false);
+        setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         loadMenu();
     }
 
@@ -36,7 +36,13 @@ public class MenuPanel extends javax.swing.JPanel {
     private void loadMenu() {
         //remove any content from parent panel and replace it with this one
 
-        for (JButton menuButton : menuButtons) add(menuButton);
+        buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.PAGE_AXIS));
+        buttonPanel.setOpaque(false);
+        add(Box.createHorizontalGlue());
+        add(buttonPanel);
+        add(Box.createHorizontalGlue());
+        for (JButton menuButton : menuButtons) buttonPanel.add(menuButton);
 
         menuButtons[0].addActionListener(new ActionListener() {
             @Override
@@ -83,18 +89,26 @@ public class MenuPanel extends javax.swing.JPanel {
                 }
             };
 
-            JPanel buttonPanel = new JPanel(new GridLayout(8, 5));
+            JPanel buttonPanel = new JPanel(new GridLayout(8, 5,0,0));
+            buttonPanel.setOpaque(false);
             for (int i = 0; i < 40; i++) {
                 levelButton[i] = new JButton(Integer.toString(i + 1));
                 buttonPanel.add(levelButton[i]);
                 levelButton[i].addActionListener(levelListener);
                 levelButton[i].setFont(new Font("Wide Latin", Font.BOLD, 18));
                 levelButton[i].setForeground(Color.white);
-                if (i < 10) levelButton[i].setBackground(Color.green);
-                else if (i < 20) levelButton[i].setBackground(Color.orange);
-                else if (i < 30) levelButton[i].setBackground(Color.blue);
-                else levelButton[i].setBackground(Color.red);
+                levelButton[i].setIcon(lvlIcon[i/10]);
+                levelButton[i].setRolloverIcon(lvlROIcon[i/10]);
+                levelButton[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+                levelButton[i].setHorizontalTextPosition(JButton.CENTER);
+                levelButton[i].setVerticalTextPosition(JButton.CENTER);
+                levelButton[i].setOpaque(false);
+                levelButton[i].setContentAreaFilled(false);
+                levelButton[i].setBorderPainted(false);
+                levelButton[i].setFocusable(false);
+                levelButton[i].setPreferredSize(new Dimension(60, 90));
             }
+            add(Box.createHorizontalGlue());
             add(buttonPanel);
         } else if (mode == GameControl.SPEED_RUN) {
             JButton[] diffButtons = new JButton[]{
@@ -130,8 +144,9 @@ public class MenuPanel extends javax.swing.JPanel {
             add(highScoresButton);
         }
 
-        JButton backButton = new JButton("Back");
+        JButton backButton = new JGameButton("Back");
         add(backButton);
+        add(Box.createHorizontalGlue());
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,5 +157,20 @@ public class MenuPanel extends javax.swing.JPanel {
             }
         });
     }
+
+    private final ImageIcon lvlIcon[] = {
+            new ImageIcon(getClass().getResource("buttons/lvlbutton1.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton2.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton3.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton4.png"))
+    };
+
+    private final ImageIcon lvlROIcon[] = {
+            new ImageIcon(getClass().getResource("buttons/lvlbutton1r.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton2r.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton3r.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton4r.png"))
+    };
+
 }
 

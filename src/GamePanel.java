@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 public class GamePanel extends JLayeredPane {
     private JPanel parent;
     private JPanel mainPanel = new JPanel();
+    private JLabel levelIcon = new JLabel();
+    private int level;
     private GameMap gameMap = new GameMap();
     private GameControl gameControl = new GameControl(this, gameMap);
     private JLabel timerLabel = new JLabel();
@@ -22,11 +24,18 @@ public class GamePanel extends JLayeredPane {
      */
     public GamePanel(JPanel parent, int mode, int level) {
         this.parent = parent;
+        this.level = level;
+        setOpaque(false);
         createGamePanel();
+
         gameControl.loadLevel(level, mode);
         if (mode == GameControl.SPEED_RUN) {
             mainPanel.add(timerLabel, BorderLayout.NORTH);
-        }
+            if(level == 4)
+                setLevelIcon(1);
+            else
+                setLevelIcon(10*level+1);
+        } else setLevelIcon(level);
     }
 
     public void updateTimer(long elapsed) {
@@ -38,18 +47,32 @@ public class GamePanel extends JLayeredPane {
      * Create the GamePanel
      */
     private void createGamePanel() {
-        setPreferredSize(new Dimension(800, 700));
+        setPreferredSize(new Dimension(MainWindow.WINDOW_WIDTH, MainWindow.WINDOW_HEIGHT));
+        mainPanel.setOpaque(false);
+        mainPanel.setLayout(new FlowLayout(0,0,0));
+        mainPanel.add(gameMap);
 
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.add(gameMap, BorderLayout.CENTER);
-        JButton menuButton = new JButton("Menu");
-        JButton ghostPlankButton = new JButton("Hide \"ghost\" plank.");
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
 
-        mainPanel.add(buttonPanel, BorderLayout.EAST);
-        buttonPanel.add(menuButton);
-        buttonPanel.add(ghostPlankButton);
+        levelIcon.setHorizontalTextPosition(JLabel.CENTER);
+        levelIcon.setVerticalTextPosition(JLabel.CENTER);
+        levelIcon.setFont(new Font("Wide Latin", Font.BOLD, 18));
+        levelIcon.setForeground(Color.white);
+
+        JGameButton menuButton = new JGameButton("Menu");
+        JGameButton ghostPlankButton = new JGameButton("Hide \"ghost\" plank.");
+
+        JPanel sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.PAGE_AXIS));
+        sidePanel.setOpaque(false);
+
+        mainPanel.add(sidePanel);
+        sidePanel.add(levelIcon);
+        sidePanel.add(menuButton);
+        sidePanel.add(ghostPlankButton);
+
+        levelIcon.setAlignmentX(Component.CENTER_ALIGNMENT);
+        menuButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        ghostPlankButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         menuButton.setFocusable(false);
         ghostPlankButton.setFocusable(false);
@@ -76,10 +99,14 @@ public class GamePanel extends JLayeredPane {
                 }
             }
         });
-        mainPanel.setBounds(100, 0, 600, 700);
+
+        mainPanel.setBounds(MainWindow.WINDOW_WIDTH/2-GameMap.NUMBER_OF_COLUMNS*GameMap.TILE_SIZE/2, 0, MainWindow.WINDOW_WIDTH-GameMap.NUMBER_OF_COLUMNS*GameMap.TILE_SIZE/2, MainWindow.WINDOW_HEIGHT);
         add(mainPanel, DEFAULT_LAYER);
+    }
 
-
+    public void setLevelIcon(int level){
+        levelIcon.setIcon(lvlIcon[level/10]);
+        levelIcon.setText(level+"");
     }
 
     /**
@@ -117,7 +144,7 @@ public class GamePanel extends JLayeredPane {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     remove(winPanel);
-                    gameMap.loadLevel(level + 1);
+                    gameControl.nextLevel();
                     revalidate();
                     repaint();
                 }
@@ -161,4 +188,11 @@ public class GamePanel extends JLayeredPane {
 
         }
     }
+
+    private final ImageIcon lvlIcon[] = {
+            new ImageIcon(getClass().getResource("buttons/lvlbutton1.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton2.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton3.png")),
+            new ImageIcon(getClass().getResource("buttons/lvlbutton4.png"))
+    };
 }

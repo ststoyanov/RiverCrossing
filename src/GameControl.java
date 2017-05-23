@@ -167,13 +167,18 @@ public class GameControl {
         }
     }
 
+    public void nextLevel(){
+        int next = gameMap.getCurrentLevel()+1;
+        gameMap.loadLevel(next);
+        parent.setLevelIcon(next);
+    }
     private void finishLevel() {
         if (mode == CLASSIC_MODE) parent.displayWinMessage(CLASSIC_MODE, gameMap.getCurrentLevel());
         else if (mode == SPEED_RUN) {
             if (gameMap.getCurrentLevel() == winLevel) {
                 timer.stop();
                 parent.displayWinMessage(SPEED_RUN, difficulty);
-            } else gameMap.loadLevel(gameMap.getCurrentLevel() + 1);
+            } else nextLevel();
         }
     }
 
