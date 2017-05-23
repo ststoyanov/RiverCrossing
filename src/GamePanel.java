@@ -10,7 +10,6 @@ public class GamePanel extends JLayeredPane {
     private JPanel parent;
     private JPanel mainPanel = new JPanel();
     private JLabel levelIcon = new JLabel();
-    private int level;
     private GameMap gameMap = new GameMap();
     private GameControl gameControl = new GameControl(this, gameMap);
     private JLabel timerLabel = new JLabel();
@@ -24,17 +23,16 @@ public class GamePanel extends JLayeredPane {
      */
     public GamePanel(JPanel parent, int mode, int level) {
         this.parent = parent;
-        this.level = level;
         setOpaque(false);
         createGamePanel();
 
         gameControl.loadLevel(level, mode);
         if (mode == GameControl.SPEED_RUN) {
             mainPanel.add(timerLabel, BorderLayout.NORTH);
-            if(level == 4)
+            if (level == 4)
                 setLevelIcon(1);
             else
-                setLevelIcon(10*level+1);
+                setLevelIcon(10 * level + 1);
         } else setLevelIcon(level);
     }
 
@@ -49,7 +47,7 @@ public class GamePanel extends JLayeredPane {
     private void createGamePanel() {
         setPreferredSize(new Dimension(MainWindow.WINDOW_WIDTH, MainWindow.WINDOW_HEIGHT));
         mainPanel.setOpaque(false);
-        mainPanel.setLayout(new FlowLayout(0,0,0));
+        mainPanel.setLayout(new FlowLayout(0, 0, 0));
         mainPanel.add(gameMap);
 
 
@@ -100,13 +98,13 @@ public class GamePanel extends JLayeredPane {
             }
         });
 
-        mainPanel.setBounds(MainWindow.WINDOW_WIDTH/2-GameMap.NUMBER_OF_COLUMNS*GameMap.TILE_SIZE/2, 0, MainWindow.WINDOW_WIDTH-GameMap.NUMBER_OF_COLUMNS*GameMap.TILE_SIZE/2, MainWindow.WINDOW_HEIGHT);
+        mainPanel.setBounds(MainWindow.WINDOW_WIDTH / 2 - GameMap.NUMBER_OF_COLUMNS * GameMap.TILE_SIZE / 2, 0, MainWindow.WINDOW_WIDTH - GameMap.NUMBER_OF_COLUMNS * GameMap.TILE_SIZE / 2, MainWindow.WINDOW_HEIGHT);
         add(mainPanel, DEFAULT_LAYER);
     }
 
-    public void setLevelIcon(int level){
-        levelIcon.setIcon(lvlIcon[level/10]);
-        levelIcon.setText(level+"");
+    public void setLevelIcon(int level) {
+        levelIcon.setIcon(lvlIcon[level / 10]);
+        levelIcon.setText(level + "");
     }
 
     /**
@@ -189,6 +187,7 @@ public class GamePanel extends JLayeredPane {
         }
     }
 
+    // load resources
     private final ImageIcon lvlIcon[] = {
             new ImageIcon(getClass().getResource("buttons/lvlbutton1.png")),
             new ImageIcon(getClass().getResource("buttons/lvlbutton2.png")),
