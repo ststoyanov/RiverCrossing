@@ -150,12 +150,19 @@ public class GamePanel extends JLayeredPane {
      */
     public void displayWinMessage(int mode, int level) {
         // create a new panel for the win message and add it to the front layer
-        JPanel winPanel = new JPanel();
+        JPanel winPanel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                g.drawImage(winBG, 0, 0, null);
+            }
+        };;
         winPanel.setLayout(new BoxLayout(winPanel, BoxLayout.Y_AXIS));
         add(winPanel, new Integer(100));
 
         JLabel winMsg = new JLabel(); // congratulating message
         JPanel buttonPanel = new JPanel(); // buttons
+        buttonPanel.setOpaque(false);
 
         // create the buttons
         JButton menuButton = new JButton("Menu");
@@ -163,9 +170,18 @@ public class GamePanel extends JLayeredPane {
         lvlButton.setFocusable(true);
         lvlButton.requestFocusInWindow();
 
+        // style
+        winMsg.setForeground(Color.black);
+        menuButton.setBackground(Color.orange);
+        menuButton.setForeground(Color.black);
+        lvlButton.setBackground(Color.orange);
+        lvlButton.setForeground(Color.black);
+
         // add content to the panels
+        winPanel.add(Box.createVerticalGlue());
         winPanel.add(winMsg);
         winPanel.add(buttonPanel);
+        winPanel.add(Box.createVerticalGlue());
 
         winMsg.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -190,7 +206,7 @@ public class GamePanel extends JLayeredPane {
             winPanel.setBounds(MainWindow.WINDOW_WIDTH / 2 - 100, MainWindow.WINDOW_HEIGHT / 2 - 40,
                     200, 80);
 
-            winMsg.setText("Congratulations level " + level + " completed!");
+            winMsg.setText("Congratulations, level " + level + " completed!");
 
             lvlButton.addActionListener(new ActionListener() {
                 @Override
@@ -259,4 +275,6 @@ public class GamePanel extends JLayeredPane {
             new ImageIcon(getClass().getResource("buttons/lvlbutton3.png")),
             new ImageIcon(getClass().getResource("buttons/lvlbutton4.png"))
     };
+
+    private final Image winBG = new ImageIcon(getClass().getResource("winbg.jpg")).getImage();
 }

@@ -32,5 +32,5 @@ public class JGameButton extends JButton {
 
     // load resources
     private final ImageIcon buttonIcon = new ImageIcon(getClass().getResource("buttons/menubutton.png"));
-    private final ImageIcon buttonROIcon = new ImageIcon(getClass().getResource("buttons/menubuttonRO.png"));
+    private final ImageIcon buttonROIcon = new ImageIcon(getClass().getResource("buttons/menubuttonr.png"));
 }

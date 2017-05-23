@@ -68,9 +68,9 @@ public class Player extends JLabel {
 
     // Load resources
     public final ImageIcon playerIcon[] = {
-            new ImageIcon(getClass().getResource("manL.png")),
-            new ImageIcon(getClass().getResource("manR.png")),
-            new ImageIcon(getClass().getResource("manU.png")),
-            new ImageIcon(getClass().getResource("manD.png"))
+            new ImageIcon(getClass().getResource("ingame/manL.png")),
+            new ImageIcon(getClass().getResource("ingame/manR.png")),
+            new ImageIcon(getClass().getResource("ingame/manU.png")),
+            new ImageIcon(getClass().getResource("ingame/manD.png"))
     };
 }

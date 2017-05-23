@@ -41,6 +41,21 @@ public class HighScoresPanel extends JPanel {
         this(parent, scores, -1);
     }
 
+    // Paints the Panel's background by tiling the bgIMG
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        int iw = bgIMG.getWidth(this);
+        int ih = bgIMG.getHeight(this);
+        if (iw > 0 && ih > 0) {
+            for (int x = 0; x < getWidth(); x += iw) {
+                for (int y = 0; y < getHeight(); y += ih) {
+                    g.drawImage(bgIMG, x, y, iw, ih, this);
+                }
+            }
+        }
+    }
+
     /**
      * Create the panel displaying the high scores.
      * Add new high score if necessary
@@ -53,12 +68,15 @@ public class HighScoresPanel extends JPanel {
         setPreferredSize(new Dimension(160, 185));
 
         JPanel placePanel = new JPanel();
+        placePanel.setOpaque(false);
         placePanel.setLayout(new GridLayout(11, 1));
 
         JPanel namePanel = new JPanel();
+        namePanel.setOpaque(false);
         namePanel.setLayout(new GridLayout(11, 1));
 
         JPanel scorePanel = new JPanel();
+        scorePanel.setOpaque(false);
         scorePanel.setLayout(new GridLayout(11, 1));
 
         //add the title row
@@ -179,4 +197,7 @@ public class HighScoresPanel extends JPanel {
             }
         }
     }
+
+    // background image
+    private final Image bgIMG = new ImageIcon(getClass().getResource("winbg.jpg")).getImage();
 }

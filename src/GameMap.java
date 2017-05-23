@@ -1435,17 +1435,17 @@ public class GameMap extends JLayeredPane {
 
 
     // Load resources
-    public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("plank1.png")); // horizontal plank
-    public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("plank2.png")); // vertical plank
+    public final ImageIcon hPlankIcon = new ImageIcon(getClass().getResource("ingame/plank1.png")); // horizontal plank
+    public final ImageIcon vPlankIcon = new ImageIcon(getClass().getResource("ingame/plank2.png")); // vertical plank
 
 
     public final ImageIcon vGhostPlankIcon[] = {
-            new ImageIcon(getClass().getResource("ghostplank1f.png")),
-            new ImageIcon(getClass().getResource("ghostplank1t.png"))
+            new ImageIcon(getClass().getResource("ingame/ghostplank1f.png")),
+            new ImageIcon(getClass().getResource("ingame/ghostplank1t.png"))
     };
 
     public final ImageIcon hGhostPlankIcon[] = {
-            new ImageIcon(getClass().getResource("ghostplank2f.png")),
-            new ImageIcon(getClass().getResource("ghostplank2t.png"))
+            new ImageIcon(getClass().getResource("ingame/ghostplank2f.png")),
+            new ImageIcon(getClass().getResource("ingame/ghostplank2t.png"))
     };
 }

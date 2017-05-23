@@ -142,19 +142,19 @@ public class GameTile extends JButton {
     }
 
     // Code for loading the resources for the rest of the class
-    public final ImageIcon bankUpIcon = new ImageIcon(getClass().getResource("bank1.jpg"));
-    public final ImageIcon bankDownIcon = new ImageIcon(getClass().getResource("bank2.jpg"));
+    public final ImageIcon bankUpIcon = new ImageIcon(getClass().getResource("ingame/bank1.jpg"));
+    public final ImageIcon bankDownIcon = new ImageIcon(getClass().getResource("ingame/bank2.jpg"));
 
     public final ImageIcon waterIcon[] = {
-            new ImageIcon(getClass().getResource("water1.jpg")),
-            new ImageIcon(getClass().getResource("water2.jpg")),
-            new ImageIcon(getClass().getResource("water3.jpg")),
-            new ImageIcon(getClass().getResource("water4.jpg"))
+            new ImageIcon(getClass().getResource("ingame/water1.jpg")),
+            new ImageIcon(getClass().getResource("ingame/water2.jpg")),
+            new ImageIcon(getClass().getResource("ingame/water3.jpg")),
+            new ImageIcon(getClass().getResource("ingame/water4.jpg"))
     };
 
-    public final ImageIcon stumpIcon = new ImageIcon(getClass().getResource("stump1.jpg"));
-    public final ImageIcon stumpDBIcon = new ImageIcon(getClass().getResource("stump2.jpg")); // downside bank stump
-    public final ImageIcon stumpUPIcon = new ImageIcon(getClass().getResource("stump3.jpg")); // upper bank stump
+    public final ImageIcon stumpIcon = new ImageIcon(getClass().getResource("ingame/stump1.jpg"));
+    public final ImageIcon stumpDBIcon = new ImageIcon(getClass().getResource("ingame/stump2.jpg")); // downside bank stump
+    public final ImageIcon stumpUPIcon = new ImageIcon(getClass().getResource("ingame/stump3.jpg")); // upper bank stump
 
 
 }
