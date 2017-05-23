@@ -24,6 +24,7 @@ public class MainWindow {
                 g.drawImage(bgIMG, 0, 0, null);
             }
         };
+
         mainPanel.add(new MenuPanel(mainPanel), BorderLayout.CENTER);
 
         window.setIconImage(new ImageIcon(getClass().getResource("icon.png")).getImage());

@@ -33,6 +33,9 @@ public class MenuPanel extends JPanel {
      * Load the menu GUI.
      */
     private void loadMenu() {
+        // add the logo at the top of the panel
+        parent.add(new JLabel(logo), BorderLayout.NORTH);
+
         //create the button panel add the buttons to it and then add it in the middle of the MenuPanel
         JPanel buttonPanel = new JPanel();
 
@@ -212,5 +215,7 @@ public class MenuPanel extends JPanel {
             new ImageIcon(getClass().getResource("buttons/diffbutton4r.png")),
             new ImageIcon(getClass().getResource("buttons/diffbutton5r.png")),
     };
+
+    private final ImageIcon logo = new ImageIcon(getClass().getResource("logo.jpg"));
 }
 
