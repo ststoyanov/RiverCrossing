@@ -2,12 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Created by zabraih on 23.05.2017.
+ * A custom styled JButton.
  */
 public class JGameButton extends JButton {
+    /**
+     * Create JButton with the custom game style
+     */
     public JGameButton() {
-      //  setFont(new Font("Wide Latin", Font.BOLD, 18));
-        //setForeground(Color.white);
         setIcon(buttonIcon);
         setRolloverIcon(buttonROIcon);
         setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -19,11 +20,17 @@ public class JGameButton extends JButton {
         setFocusable(false);
     }
 
-    public JGameButton(String title){
+    /**
+     * Create JButton with the custom game style and a title
+     *
+     * @param title text of the JButton
+     */
+    public JGameButton(String title) {
         this();
         setText(title);
     }
 
+    // load resources
     private final ImageIcon buttonIcon = new ImageIcon(getClass().getResource("buttons/menubutton.png"));
     private final ImageIcon buttonROIcon = new ImageIcon(getClass().getResource("buttons/menubuttonRO.png"));
 }

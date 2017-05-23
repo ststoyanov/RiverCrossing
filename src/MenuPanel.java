@@ -34,10 +34,9 @@ public class MenuPanel extends JPanel {
      */
     private void loadMenu() {
         //create the button panel add the buttons to it and then add it in the middle of the MenuPanel
-
         JPanel buttonPanel = new JPanel();
 
-        buttonPanel.setLayout(new BoxLayout(buttonPanel,BoxLayout.PAGE_AXIS));
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
         buttonPanel.setOpaque(false);
 
         for (JButton menuButton : menuButtons) buttonPanel.add(menuButton);
@@ -47,7 +46,7 @@ public class MenuPanel extends JPanel {
         add(Box.createHorizontalGlue());
 
 
-        // create the action listener for the menu buttons
+        // create the action listeners for the menu buttons
         menuButtons[0].addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,7 +80,18 @@ public class MenuPanel extends JPanel {
      * Load the available levels list and display it in the form of JButtons which load them
      */
     public void loadLevels(int mode) {
+        // create the back button
         JButton backButton = new JGameButton("Back");
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                removeAll();
+                loadMenu();
+                revalidate();
+                repaint();
+            }
+        });
+
         // if the mode is classic load a list of 40 levels
         if (mode == GameControl.CLASSIC_MODE) {
             JButton[] levelButton = new JButton[40];
@@ -97,7 +107,7 @@ public class MenuPanel extends JPanel {
             };
 
             // create a button panel - a 8x5 grid of level buttons
-            JPanel buttonPanel = new JPanel(new GridLayout(8, 5,0,0));
+            JPanel buttonPanel = new JPanel(new GridLayout(8, 5, 0, 0));
             buttonPanel.setOpaque(false);
 
             add(Box.createHorizontalGlue());
@@ -112,8 +122,8 @@ public class MenuPanel extends JPanel {
                 levelButton[i].addActionListener(levelListener);
                 levelButton[i].setFont(new Font("Wide Latin", Font.BOLD, 18));
                 levelButton[i].setForeground(Color.white);
-                levelButton[i].setIcon(lvlIcon[i/10]);
-                levelButton[i].setRolloverIcon(lvlROIcon[i/10]);
+                levelButton[i].setIcon(lvlIcon[i / 10]);
+                levelButton[i].setRolloverIcon(lvlROIcon[i / 10]);
                 levelButton[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
                 levelButton[i].setHorizontalTextPosition(JButton.CENTER);
                 levelButton[i].setVerticalTextPosition(JButton.CENTER);
@@ -124,6 +134,7 @@ public class MenuPanel extends JPanel {
                 levelButton[i].setPreferredSize(new Dimension(60, 90));
             }
         }
+
         // if the mode is speed run, load the speed run difficulty buttons
         else if (mode == GameControl.SPEED_RUN) {
             JPanel buttonPanel = new JPanel();
@@ -169,18 +180,9 @@ public class MenuPanel extends JPanel {
             }
             buttonPanel.add(backButton);
         }
-
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                removeAll();
-                loadMenu();
-                revalidate();
-                repaint();
-            }
-        });
     }
 
+    // load resources
     private final ImageIcon lvlIcon[] = {
             new ImageIcon(getClass().getResource("buttons/lvlbutton1.png")),
             new ImageIcon(getClass().getResource("buttons/lvlbutton2.png")),

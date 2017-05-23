@@ -8,15 +8,6 @@ import java.awt.event.ActionListener;
 public class GameControl {
     public static final int CLASSIC_MODE = 0;
     public static final int SPEED_RUN = 1;
-    private GameMap gameMap;
-    private GamePanel parent;
-    private Player player;
-    private int mode;
-    private int difficulty;
-    private int winLevel;
-    private Timer timer;
-    private long startTime;
-    private long elapsed;
 
     public enum Direction {
         LEFT, RIGHT, UP, DOWN;
@@ -33,9 +24,24 @@ public class GameControl {
         }
     }
 
+    private GameMap gameMap;
+    private GamePanel parent;
+
+    private Player player;
+
+    private int mode;
+    private int difficulty;
+    private int winLevel;
+
+    private Timer timer;
+    private long startTime;
+    private long elapsed;
+
+
     /**
      * Constructor. Creates a game control for a GameMap
      *
+     * @param parent  GamePanel of the game
      * @param gameMap gameMap to be played in
      */
     public GameControl(GamePanel parent, GameMap gameMap) {
@@ -45,7 +51,13 @@ public class GameControl {
         createInputControl();
     }
 
-    public void loadLevel(int level, int mode) {
+    /**
+     * Load a game level or start a speed run.
+     *
+     * @param level level or difficulty of the game
+     * @param mode  mode of the game
+     */
+    public void loadGame(int level, int mode) {
         this.mode = mode;
         if (mode == CLASSIC_MODE) gameMap.loadLevel(level);
         else if (mode == SPEED_RUN) {
@@ -54,6 +66,67 @@ public class GameControl {
         }
     }
 
+    /**
+     * Get the mode of the game being played
+     *
+     * @return game mode
+     */
+    public int getMode() {
+        return mode;
+    }
+
+    /**
+     * Go to the next level.
+     */
+    public void nextLevel() {
+        int next = gameMap.getCurrentLevel() + 1;
+        gameMap.loadLevel(next);
+        parent.setLevelIcon(next);
+    }
+
+    /**
+     * Called when finishing a level.
+     * If in classic mode display the win message.
+     * If in speed run go to the next level or display win message on last lvl of the run.
+     */
+    private void finishLevel() {
+        if (mode == CLASSIC_MODE) parent.displayWinMessage(CLASSIC_MODE, gameMap.getCurrentLevel());
+        else if (mode == SPEED_RUN) {
+            if (gameMap.getCurrentLevel() == winLevel) {
+                timer.stop();
+                parent.displayWinMessage(SPEED_RUN, difficulty);
+            } else nextLevel();
+        }
+    }
+
+    /**
+     * Start a speed run
+     *
+     * @param level level of difficulty
+     */
+    private void startSpeedRun(int level) {
+        if (level == 0) {
+            gameMap.loadLevel(1);
+            winLevel = 2;
+        } else if (level == 1) {
+            gameMap.loadLevel(11);
+            winLevel = 20;
+        } else if (level == 2) {
+            gameMap.loadLevel(21);
+            winLevel = 30;
+        } else if (level == 3) {
+            gameMap.loadLevel(31);
+            winLevel = 40;
+        } else {
+            gameMap.loadLevel(1);
+            winLevel = 40;
+        }
+        startTimer();
+    }
+
+    /**
+     * Start a timer for the SpeedRun mode.
+     */
     private void startTimer() {
         startTime = System.currentTimeMillis();
         timer = new Timer(10, new ActionListener() {
@@ -165,42 +238,6 @@ public class GameControl {
                 gameMap.updateGhostPlank();
             }
         }
-    }
-
-    public void nextLevel(){
-        int next = gameMap.getCurrentLevel()+1;
-        gameMap.loadLevel(next);
-        parent.setLevelIcon(next);
-    }
-    private void finishLevel() {
-        if (mode == CLASSIC_MODE) parent.displayWinMessage(CLASSIC_MODE, gameMap.getCurrentLevel());
-        else if (mode == SPEED_RUN) {
-            if (gameMap.getCurrentLevel() == winLevel) {
-                timer.stop();
-                parent.displayWinMessage(SPEED_RUN, difficulty);
-            } else nextLevel();
-        }
-    }
-
-    private void startSpeedRun(int level) {
-        if (level == 0) {
-            gameMap.loadLevel(1);
-            winLevel = 2;
-        } else if (level == 1) {
-            gameMap.loadLevel(11);
-            winLevel = 20;
-        } else if (level == 2) {
-            gameMap.loadLevel(21);
-            winLevel = 30;
-        } else if (level == 3) {
-            gameMap.loadLevel(31);
-            winLevel = 40;
-        } else {
-            gameMap.loadLevel(1);
-            winLevel = 40;
-        }
-
-        startTimer();
     }
 }
 
